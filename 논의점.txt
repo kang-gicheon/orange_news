@@ -1,0 +1,7 @@
++ article 테이블, reply 테이블, react 테이블 KEY 연결 문제
++ 테이블 PK, FK 여부(article 테이블의 articlenum)
++ CONSTRAINT?
+
++ 시퀀스: CREATE SEQUENCE seq_articlenum NOCACHE;
+
++ article 테이블과 react 테이블에서 같은 컬럼명이 있음(타입은 다름)
