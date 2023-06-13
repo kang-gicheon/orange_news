@@ -1,16 +1,26 @@
-CREATE table member (
+DROP TABLE MEMBER;
+DROP TABLE ARTICLE;
+DROP TABLE REPLY;
+DROP TABLE REACT;
 
-    id varchar2(50) PRIMARY KEY,    -- 아이디
+DROP SEQUENCE SEQ_ANUM; 
+
+--여기서부터 실행--
+
+CREATE SEQUENCE SEQ_ANUM NOCACHE; -- 기사 번호 부여 시퀀스 
+
+CREATE TABLE member ( --회원 정보 테이블 
+    id varchar2(50),    -- 아이디
     pwd varchar2(50),   -- 비밀번호
     name varchar2(50),  -- 이름
     rep int default 0,  -- 0이 일반 계정
     pnum varchar2(50),-- 휴대폰 번호
-    address varchar2(50) -- 주소 
+    address varchar2(50), -- 주소 
+    
+    PRIMARY KEY (id)
 );
 
-drop table article;
-
-CREATE table article (
+CREATE TABLE ARTICLE ( --기사 정보 테이블 
 
     title varchar2(50), --제목
     writedate date, -- 작성날짜
@@ -20,24 +30,27 @@ CREATE table article (
     type int,       -- 기사 종류
     reccount int,   -- 추천 수
     hotissue int DEFAULT 0,     -- 특종 여부
-    img blob    -- 이미지
-   
+    img blob,    -- 이미지
+    
+    ID VARCHAR2(50) REFERENCES MEMBER(ID), -- 작성자 
+    
+    PRIMARY KEY (articlenum)--기사 번호를 PK로
 );
 
-drop table reply;
-
-create table reply (
+CREATE TABLE REPLY (
 
     wdate date,     -- 작성 날짜
     rcomment varchar2(100), -- 댓글
     good int,   -- 반응(좋아요)
-    bad int     -- 반응(싫어요)
-
+    bad int,     -- 반응(싫어요)
+    
+    ID VARCHAR2(50) REFERENCES MEMBER(ID),
+    articlenum int REFERENCES ARTICLE(articlenum)
 );
 
-create table react (
-
-    type varchar(20),   -- 반응 종류
-    rcount int  -- 반응 갯수
-
+CREATE TABLE REACT (
+    r_type varchar(20),   -- 반응 종류
+    rcount int,  -- 반응 갯수
+    
+    articlenum int REFERENCES ARTICLE(articlenum) 
 );
