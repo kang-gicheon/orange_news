@@ -5,52 +5,53 @@ DROP TABLE REACT;
 
 DROP SEQUENCE SEQ_ANUM; 
 
---¿©±â¼­ºÎÅÍ ½ÇÇà--
+--ì—¬ê¸°ì„œë¶€í„° ì‹¤í–‰--
 
-CREATE SEQUENCE SEQ_ANUM NOCACHE; -- ±â»ç ¹øÈ£ ºÎ¿© ½ÃÄö½º 
+CREATE SEQUENCE SEQ_ANUM NOCACHE; -- ê¸°ì‚¬ ë²ˆí˜¸ ë¶€ì—¬ ì‹œí€€ìŠ¤ 
 
-CREATE TABLE member ( --È¸¿ø Á¤º¸ Å×ÀÌºí 
-    id varchar2(50),    -- ¾ÆÀÌµğ
-    pwd varchar2(50),   -- ºñ¹Ğ¹øÈ£
-    name varchar2(50),  -- ÀÌ¸§
-    rep int default 0,  -- 0ÀÌ ÀÏ¹İ °èÁ¤
-    pnum varchar2(50),-- ÈŞ´ëÆù ¹øÈ£
-    address varchar2(50), -- ÁÖ¼Ò 
+CREATE TABLE member ( --íšŒì› ì •ë³´ í…Œì´ë¸” 
+    id varchar2(50),    -- ì•„ì´ë””
+    pwd varchar2(50),   -- ë¹„ë°€ë²ˆí˜¸
+    name varchar2(50),  -- ì´ë¦„
+    rep int default 0,  -- 0ì´ ì¼ë°˜ ê³„ì •
+    pnum varchar2(50),-- íœ´ëŒ€í° ë²ˆí˜¸
+    address varchar2(50), -- ì£¼ì†Œ 
     
     PRIMARY KEY (id)
 );
 
-CREATE TABLE ARTICLE ( --±â»ç Á¤º¸ Å×ÀÌºí 
+CREATE TABLE ARTICLE ( --ê¸°ì‚¬ ì •ë³´ í…Œì´ë¸” 
 
-    title varchar2(50), --Á¦¸ñ
-    writedate date, -- ÀÛ¼º³¯Â¥
-    updatedate date,    -- ¼öÁ¤³¯Â¥
-    content varchar2(200),  -- ³»¿ë
-    articlenum int,     -- ±â»ç ¹øÈ£
-    type int,       -- ±â»ç Á¾·ù
-    reccount int,   -- ÃßÃµ ¼ö
-    hotissue int DEFAULT 0,     -- Æ¯Á¾ ¿©ºÎ
-    img blob,    -- ÀÌ¹ÌÁö
+    title varchar2(50), --ì œëª©
+    writedate date, -- ì‘ì„±ë‚ ì§œ
+    updatedate date,    -- ìˆ˜ì •ë‚ ì§œ
+    content varchar2(200),  -- ë‚´ìš©
+    articlenum int,     -- ê¸°ì‚¬ ë²ˆí˜¸
+    type int,       -- ê¸°ì‚¬ ì¢…ë¥˜
+    reccount int,   -- ì¶”ì²œ ìˆ˜
+    hotissue int DEFAULT 0,     -- íŠ¹ì¢… ì—¬ë¶€
+    img blob,    -- ì´ë¯¸ì§€
     
-    ID VARCHAR2(50) REFERENCES MEMBER(ID), -- ÀÛ¼ºÀÚ 
+    ID VARCHAR2(50) REFERENCES MEMBER(ID), -- ì‘ì„±ì 
     
-    PRIMARY KEY (articlenum)--±â»ç ¹øÈ£¸¦ PK·Î
+    PRIMARY KEY (articlenum)--ê¸°ì‚¬ ë²ˆí˜¸ë¥¼ PKë¡œ
 );
 
 CREATE TABLE REPLY (
 
-    wdate date,     -- ÀÛ¼º ³¯Â¥
-    rcomment varchar2(100), -- ´ñ±Û
-    good int,   -- ¹İÀÀ(ÁÁ¾Æ¿ä)
-    bad int,     -- ¹İÀÀ(½È¾î¿ä)
+    wdate date,     -- ì‘ì„± ë‚ ì§œ
+    rcomment varchar2(100), -- ëŒ“ê¸€
+    good int,   -- ë°˜ì‘(ì¢‹ì•„ìš”)
+    bad int,     -- ë°˜ì‘(ì‹«ì–´ìš”)
     
     ID VARCHAR2(50) REFERENCES MEMBER(ID),
     articlenum int REFERENCES ARTICLE(articlenum)
 );
 
 CREATE TABLE REACT (
-    r_type varchar(20),   -- ¹İÀÀ Á¾·ù
-    rcount int,  -- ¹İÀÀ °¹¼ö
+    r_type varchar(20),   -- ë°˜ì‘ ì¢…ë¥˜
+    rcount int,  -- ë°˜ì‘ ê°¯ìˆ˜
     
     articlenum int REFERENCES ARTICLE(articlenum) 
 );
+
