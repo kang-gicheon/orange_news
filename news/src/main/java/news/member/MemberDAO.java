@@ -48,13 +48,26 @@ public class MemberDAO {
 		}
 	}
 	
-	public void login() {			//로그인 메서드
+	public void login(MemberVO memberVO) {			//로그인 메서드
+		String id;
+		String pwd;
+		String name;
 		try {
 			conn=data.getConnection();
-			String query = "SELECT FROM member WHERE id=?, pwd=?";
-			String id;
+			id = memberVO.getId();
+			pwd = memberVO.getPwd();
+			String query = "SELECT id, name FROM member WHERE id=?, pwd=?";
 			pst=conn.prepareStatement(query);
-			pst.executeQuery();
+			pst.setString(1, id);
+			pst.setString(2, pwd);
+			ResultSet rs = pst.executeQuery();
+			rs.next();
+			id=rs.getString("id");
+			name=rs.getString("name");
+			
+			memberVO.setId(id);
+			memberVO.setName(name);
+			rs.close();
 			pst.close();
 			conn.close();
 		} catch (Exception e) {
@@ -116,7 +129,7 @@ public class MemberDAO {
 		}
 	}
 	
-	public void withdraw(String id) {				//회원 탈퇴 메서드
+	public void withdraw(String id) {				//회원 탈퇴 메서드(로그인 값을 매개변수)
 		try {
 			conn=data.getConnection();
 			String query= "DELETE FROM member WHERE id=?";

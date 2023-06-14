@@ -2,7 +2,7 @@ package news.member;
 
 public class MemberVO {
 	//member 테이블 컬럼들
-	private String id;			//아이디(PK?)
+	private String id;			//아이디(PK)
 	private String pwd;			//비밀번호
 	private String name;		//이름
 	private int reporter=0;		//기자 계정 유효성 검사?

@@ -1,6 +1,9 @@
 package news.article;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -30,6 +33,38 @@ public class NewsController extends HttpServlet {
 	}
 	
 	private void doHandle(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
+		String nextPage = "";
+		request.setCharacterEncoding("utf-8");
+		response.setContentType("text/html; charset=utf-8");
+		String action = request.getPathInfo();
+		System.out.println("action: " + action);
+		try {
+			if(action==null) {			//기본페이지
+				
+				nextPage="/";
+			}else if(action.equals("/")) {
+				
+				nextPage="/";
+			}else if(action.equals("/")) {
+				
+				nextPage="/";
+			}else if(action.equals("/")) {				//알림을 동반하는페이지
+				
+				PrintWriter pw = response.getWriter();
+				pw.print("<script>" + "alert('알람글');"			//입력자리
+									+ " location.href='"
+									+ request.getContextPath()
+									+ "url"						//입력자리
+									+ "';"
+									+ "</script>");
+				return;
+			}
+			
+			RequestDispatcher dispatch = request.getRequestDispatcher(nextPage);
+			dispatch.forward(request, response);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }
