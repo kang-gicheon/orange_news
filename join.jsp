@@ -20,12 +20,12 @@
 
 <div id="signup">
 <form action="">
-    <div id="signup">
+    <div id="signup">	
         <div>
-            <a>Log In</a>		<!-- c:set 활용 예정  -->
+            <a>Log In</a>		<!-- c:set 활용 예정, 로그인 페이지 이동  -->
         </div>
-        <h1>Sign Up</h1>
-        <div class="field-wrap">
+        <h1>Sign Up</h1>ㄴ
+        <div class="field-wrap">	<!-- autocomplete = 자동완성 기능 비활성화 -->
             <table>
                 <tr>
                     <td>
