@@ -14,7 +14,7 @@ request.setCharacterEncoding("UTF-8");
 		obj.submit();
 	}
 </script>
-
+ 
 <head>
 <meta charset="UTF-8">
 <title>기사 작성 페이지</title>
