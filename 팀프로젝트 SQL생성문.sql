@@ -15,7 +15,7 @@ CREATE TABLE member ( --회원 정보 테이블
     name varchar2(50),  -- 이름
     rep int default 0,  -- 0이 일반 계정
     pnum varchar2(50),-- 휴대폰 번호
-    address varchar2(50), -- 주소 
+    email varchar2(50), -- 이메일주소
     
     PRIMARY KEY (id)
 );
