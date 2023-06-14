@@ -28,7 +28,7 @@ public class ArticleDAO {
 	public void articlesList() {		//기사 목록 메서드
 		try {
 			conn=data.getConnection();
-			String query = "SELECT title, writedate, updatedate, articlenum, type, reccount, hotissue FROM article";
+			String query = "SELECT title, writedate, updatedate, articlenum, type, reccount, hotissuel, name FROM article";
 							//무엇을 리스로에서 보여줄 것인지?
 							//확정: title, updatedate, type
 			System.out.println(query);
@@ -42,7 +42,7 @@ public class ArticleDAO {
 				int type = rs.getInt("type");
 				int reccount = rs.getInt("reccount");
 				int hotissue = rs.getInt("hotissue");
-				String id = rs.getString("id");
+				String name = rs.getString("name");
 			}
 			rs.close();
 			pst.close();
@@ -52,10 +52,10 @@ public class ArticleDAO {
 		}
 	}
 	
-	public void selectArticle() {		//기사 선택 메서드
+	public void selectArticle(ArticleVO articleVO) {		//기사 선택 메서드
 		try {
 			conn=data.getConnection();
-			String query="SELECT title, writedate, updatedate, content articlenum, type, reccount, hotissue FROM article";
+			String query="SELECT title, writedate, updatedate, content articlenum, type, reccount, hotissue, name FROM article";
 						//무엇을 게시판에서 보여줄 것인지?
 			System.out.println(query);
 			pst = conn.prepareStatement(query);
@@ -69,8 +69,15 @@ public class ArticleDAO {
 			int type = rs.getInt("type");
 			int reccount = rs.getInt("reccount");
 			int hotissue = rs.getInt("hotissue");
-			String id = rs.getString("id");
-			
+			String name = rs.getString("name");
+			articleVO.setTitle(title);
+			articleVO.setWritedate(writeDate);
+			articleVO.setUpdatedate(updatedate);
+			articleVO.setContent(content);
+			articleVO.setArticlenum(articlenum);
+			articleVO.setType(type);
+			articleVO.setRecCount(reccount);
+			articleVO.setHotissue(hotissue);
 			rs.close();
 			pst.close();
 			conn.close();
@@ -84,7 +91,6 @@ public class ArticleDAO {
 			conn=data.getConnection();
 			String title = articleVO.getTitle();
 			String content = articleVO.getContent();
-			int articlenum = articleVO.getArticlenum();
 			int type = articleVO.getType();
 			Blob img = articleVO.getImg();
 			String query = "INSERT INTO article (title, writedate, updatedate, content, articlenum, type, img) "

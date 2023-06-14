@@ -9,12 +9,12 @@ public class ArticleVO {
 	private Date writedate;		//작성날짜
 	private Date updatedate;	//수정날짜
 	private String content;		//내용
-	private int articlenum;		//기사 번호(PK 예정?)
+	private int articlenum;		//기사 번호(PK)
 	private int type;			//기사 종류
 	private int recCount;		//추천 수
 	private int hotissue;		//특종여부, headline?
 	private Blob img;			//이미지파일 -> 저장위치에서 불러오기냐 DB자체 저장이냐?
-	
+	private String name;		//기자 이름(FK)
 	
 	//react 테이블 컬럼들(getter/setter 미생성)
 	private String actype;		//리액션 종류(type) 비고: article 테이블에서 똑같은 컬럼명이 있음
@@ -103,5 +103,16 @@ public class ArticleVO {
 
 	public void setImg(Blob img) {
 		this.img = img;
-	}	
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	
+
 }
