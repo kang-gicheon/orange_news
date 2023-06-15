@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.io.FileUtils;
 
 @WebServlet("/news/*")
 public class NewsController extends HttpServlet {
@@ -79,25 +80,25 @@ public class NewsController extends HttpServlet {
 
 				System.out.println("기사 작성 폼 요청");
 
-				while (true) {
-					if (LoginOX.equals("X")) { // 로그인이 안 되어있을 경우
-						PrintWriter pw = response.getWriter();
-						pw.print("<script>" + " alert('로그인이 필요합니다.');" + " location.href='" + request.getContextPath()
-								+ "/news/login.do';" + "</script>");
-						return;
-					}
-
-					if (LoginOX.equals("O") && ReportOX.equals("X")) { // 로그인은 되어있으나 기자 계정이 아닌 경우
-						PrintWriter pw = response.getWriter();
-						pw.print("<script>" + " alert('기자 계정이 아닙니다.');" + " location.href='" + request.getContextPath()
-								+ "/news/';" + "</script>");
-						return;
-					}
-
-					nextPage = "/test/addArticlePage.jsp";
-
-				}
-				//nextPage = "/test/addArticlePage.jsp";
+//				while (true) {
+//					if (LoginOX.equals("X")) { // 로그인이 안 되어있을 경우
+//						PrintWriter pw = response.getWriter();
+//						pw.print("<script>" + " alert('로그인이 필요합니다.');" + " location.href='" + request.getContextPath()
+//								+ "/news/login.do';" + "</script>");
+//						return;
+//					}
+//
+//					if (LoginOX.equals("O") && ReportOX.equals("X")) { // 로그인은 되어있으나 기자 계정이 아닌 경우
+//						PrintWriter pw = response.getWriter();
+//						pw.print("<script>" + " alert('기자 계정이 아닙니다.');" + " location.href='" + request.getContextPath()
+//								+ "/news/';" + "</script>");
+//						return;
+//					}
+//
+//					nextPage = "/test/addArticlePage.jsp";
+//
+//				}
+				nextPage = "/test/addArticlePage.jsp";
 			}
 
 			else if (action.equals("/addArticle.do")) { // 기사 작성 (기자로 로그인시)
@@ -108,12 +109,23 @@ public class NewsController extends HttpServlet {
 				String content = articleMap.get("content");
 				String type = articleMap.get("articleType");
 				String hio = articleMap.get("hotissue");
-				
+				String imgFileName = articleMap.get("imgFileName");
+				System.out.println("이미지 파일 상태 "+imgFileName);
 				articleVO.setTitle(title);
 				articleVO.setContent(content);
 				articleVO.setType(Integer.parseInt(type));
 				articleVO.setHotissue(Integer.parseInt(hio));
+				articleVO.setimgFileName(imgFileName);
 				articleService.addArticle(articleVO);
+				
+				if(imgFileName != null ) {
+					System.out.println("들어오는지");
+					File srcFile = new File(ARTICLE_IMAGE_REPO+"\\"+"temp"+"\\"+imgFileName);
+					File destDir = new File(ARTICLE_IMAGE_REPO+"\\"+title); //제목 기준으로 디렉토리 생성
+					destDir.mkdirs();
+					FileUtils.moveFileToDirectory(srcFile, destDir, true);
+					srcFile.delete();
+				}
 				
 				PrintWriter pw = response.getWriter();
 				pw.print("<script>"+" alert('새 기사를 작성했습니다.');"+" location.href='"
@@ -121,6 +133,15 @@ public class NewsController extends HttpServlet {
 						return; 
 				
 			} 
+			else if(action.equals("/viewArticle.do")) {
+				String articlenum = request.getParameter("articlenum");
+				System.out.println(articlenum+" <= articlenumString입니다");
+				int temp = Integer.parseInt(articlenum);
+				System.out.println(temp+" <= temp입니다");
+				articleVO = articleService.viewArticle(temp);
+				request.setAttribute("article", articleVO);
+				nextPage="/test/viewArticle.jsp";
+			}
 
 			else {
 				System.out.println("그 외");
@@ -158,7 +179,7 @@ public class NewsController extends HttpServlet {
 					// 파일 업로드로 같이 전송된 새 글 관련 매개변수를 Map에 저장&반환
 				} else {
 					System.out.println("파라미터이름: " + fileItem.getFieldName());
-					System.out.println("파일 이믈:" + fileItem.getName());
+					System.out.println("파일 이름:" + fileItem.getName());
 					System.out.println("파일 크기:" + fileItem.getSize() + "bytes");
 
 					if (fileItem.getSize() > 0) { // 파일 크기가 0보다 크면 (크기가 잡히면 존재한다는 뜻) 저장소에 업로드
