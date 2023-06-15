@@ -30,7 +30,7 @@ CREATE TABLE ARTICLE ( --기사 정보 테이블
     type int,       -- 기사 종류
     reccount int,   -- 추천 수
     hotissue int DEFAULT 0,     -- 특종 여부
-    img blob,    -- 이미지
+    img varchar2(100),    -- 이미지
     
     ID VARCHAR2(50) REFERENCES MEMBER(ID), -- 작성자 
     
