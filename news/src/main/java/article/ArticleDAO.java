@@ -2,6 +2,7 @@ package article;
 
 import java.sql.Blob;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
@@ -77,6 +78,7 @@ public class ArticleDAO {
 
 	
 	public void insertNewArticle(ArticleVO article) {
+		
 		try {
 			
 			System.out.println("insertNewArticle메소드");
@@ -84,13 +86,14 @@ public class ArticleDAO {
 			String title = article.getTitle();
 			String content = article.getContent();
 			int type = article.getType();
-			int reccount = article.getRecCount();
 			int hotissue = article.getHotissue();
 			String img = article.getimgFileName();
-			String id = article.getId();
+		//	String id = article.getId();
 			
 			String query = "INSERT INTO ARTICLE (title, writedate, updatedate, content, articlenum, type, reccount, hotissue, img, id)"
-					+ " values(?, sysdate, sysdate, ?, seq_anum.nextval, ?, 0, ?, null, 'reporter1')";
+					+ " values(?, sysdate, sysdate, ?, seq_anum.nextval, ?, 0, ?, ?, 'reporter1')";
+			
+		//	String query2 = "SELECT articlenum FROM ARTICLE WHERE title =?";
 			
 			System.out.println(query);
 			pstmt=conn.prepareStatement(query);
@@ -98,16 +101,61 @@ public class ArticleDAO {
 			pstmt.setString(2, content);
 			pstmt.setInt(3, type);
 			pstmt.setInt(4, hotissue);
-			
-			
+			pstmt.setString(5,img);
 			pstmt.executeUpdate();
 			pstmt.close();
+		
+//			PreparedStatement pstmt2 = conn.prepareStatement(query2);
+//			pstmt2.setString(1, title);
+//			ResultSet rs = pstmt.executeQuery();
+//			while(rs.next()) {
+//				articlenum = rs.getInt("articlenum");
+//			}
+//			
+//			
+//			pstmt2.close();
+//			rs.close();
+			
+			
 			conn.close();
 			
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
 		
-		
+	}
+	
+	public ArticleVO selectArticle(int articlenum) {
+		ArticleVO article = new ArticleVO();
+		try {
+			conn=dataFactory.getConnection();
+			String query ="SELECT title, writedate, content, articlenum, type, reccount, hotissue, img, id"
+					+" from ARTICLE where articlenum=?";
+			System.out.println(query);
+			pstmt=conn.prepareStatement(query);
+			pstmt.setInt(1, articlenum);
+			ResultSet rs = pstmt.executeQuery();
+			rs.next();
+			String title = rs.getString("title");
+			Date writedate = rs.getDate("writedate");
+			String content = rs.getString("content");
+			int articlenum2= rs.getInt("articlenum");
+			String imageFileName = rs.getString("img");
+			String id = rs.getString("id");
+			
+			
+			article.setArticlenum(articlenum2);
+			article.setTitle(title);
+			article.setContent(content);
+			article.setimgFileName(imageFileName);
+			article.setId(id);
+			article.setWritedate(writedate);
+			rs.close();
+			pstmt.close();
+			conn.close();
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		return article;
 	}
 }
