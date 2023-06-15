@@ -1,12 +1,11 @@
 package article;
 
-import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
-import java.util.List; 
+import java.util.List;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -87,11 +86,11 @@ public class ArticleDAO {
 			String content = article.getContent();
 			int type = article.getType();
 			int hotissue = article.getHotissue();
-			String img = article.getimgFileName();
+			String img = article.getImgFileName();
 		//	String id = article.getId();
 			
 			String query = "INSERT INTO ARTICLE (title, writedate, updatedate, content, articlenum, type, reccount, hotissue, img, id)"
-					+ " values(?, sysdate, sysdate, ?, seq_anum.nextval, ?, 0, ?, ?, 'reporter1')";
+					+ " values(?, sysdate, sysdate, ?, seq_anum.nextval, ?, 0, ?, ?, 'asd')";
 			
 		//	String query2 = "SELECT articlenum FROM ARTICLE WHERE title =?";
 			
@@ -125,29 +124,31 @@ public class ArticleDAO {
 		
 	}
 	
-	public ArticleVO selectArticle(int articlenum) {
-		ArticleVO article = new ArticleVO();
+	public ArticleVO selectArticle(ArticleVO article) {
 		try {
 			conn=dataFactory.getConnection();
 			String query ="SELECT title, writedate, content, articlenum, type, reccount, hotissue, img, id"
 					+" from ARTICLE where articlenum=?";
 			System.out.println(query);
 			pstmt=conn.prepareStatement(query);
-			pstmt.setInt(1, articlenum);
+			pstmt.setInt(1, article.getArticlenum());
 			ResultSet rs = pstmt.executeQuery();
 			rs.next();
 			String title = rs.getString("title");
 			Date writedate = rs.getDate("writedate");
 			String content = rs.getString("content");
-			int articlenum2= rs.getInt("articlenum");
+			int type = rs.getInt("type");
+			int reccount = rs.getInt("reccount");
+			int hotissue = rs.getInt("hotissue");
 			String imageFileName = rs.getString("img");
 			String id = rs.getString("id");
 			
-			
-			article.setArticlenum(articlenum2);
 			article.setTitle(title);
 			article.setContent(content);
-			article.setimgFileName(imageFileName);
+			article.setType(type);
+			article.setRecCount(reccount);
+			article.setHotissue(hotissue);
+			article.setImgFileName(imageFileName);
 			article.setId(id);
 			article.setWritedate(writedate);
 			rs.close();
