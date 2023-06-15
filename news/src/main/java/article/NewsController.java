@@ -21,6 +21,8 @@ import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.FileUtils;
 
+import news.member.MemberVO;		//<-임시 임포트
+
 @WebServlet("/news/*")
 public class NewsController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -28,10 +30,13 @@ public class NewsController extends HttpServlet {
 	//ArticleDAO articleDAO;
 	ArticleVO articleVO;
 	ArticleService articleService;
+	MemberVO memberVO;		//MemberVO 변수 추가
 
 	public void init(ServletConfig config) throws ServletException {
 		articleVO = new ArticleVO();
+		memberVO = new MemberVO();
 		articleService = new ArticleService();
+		System.out.println("===> init() 호출");
 	}
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -47,8 +52,9 @@ public class NewsController extends HttpServlet {
 	private void doHandle(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		String nextPage = "";
-		String LoginOX = "X";
-		String ReportOX = "X";
+		String loginId=memberVO.getId();		//테스트용 변수
+//		boolean loginValue=memberDAO.login();
+		int report=memberVO.getReporter();		//테스트용 변수
 		request.setCharacterEncoding("utf-8");
 		response.setContentType("text/html;charset=utf-8");
 		String action = request.getPathInfo();
@@ -80,24 +86,21 @@ public class NewsController extends HttpServlet {
 
 				System.out.println("기사 작성 폼 요청");
 
-//				while (true) {
-//					if (LoginOX.equals("X")) { // 로그인이 안 되어있을 경우
-//						PrintWriter pw = response.getWriter();
-//						pw.print("<script>" + " alert('로그인이 필요합니다.');" + " location.href='" + request.getContextPath()
-//								+ "/news/login.do';" + "</script>");
-//						return;
-//					}
-//
-//					if (LoginOX.equals("O") && ReportOX.equals("X")) { // 로그인은 되어있으나 기자 계정이 아닌 경우
-//						PrintWriter pw = response.getWriter();
-//						pw.print("<script>" + " alert('기자 계정이 아닙니다.');" + " location.href='" + request.getContextPath()
-//								+ "/news/';" + "</script>");
-//						return;
-//					}
-//
-//					nextPage = "/test/addArticlePage.jsp";
-//
-//				}
+				loginId="asd"; report=1; //임시데이터
+				if (loginId==null) { // 로그인이 안 되어있을 경우
+					PrintWriter pw = response.getWriter();
+					pw.print("<script>" + " alert('로그인이 필요합니다.');" + " location.href='" + request.getContextPath()
+							+ "/news/login.do';" + "</script>");
+					return;
+				}
+
+				if (loginId != null && report==0) { // 로그인은 되어있으나 기자 계정이 아닌 경우
+					PrintWriter pw = response.getWriter();
+					pw.print("<script>" + " alert('기자 계정이 아닙니다.');" + " location.href='" + request.getContextPath()
+							+ "/news/';" + "</script>");
+					return;
+				}
+				
 				nextPage = "/test/addArticlePage.jsp";
 			}
 
@@ -115,7 +118,7 @@ public class NewsController extends HttpServlet {
 				articleVO.setContent(content);
 				articleVO.setType(Integer.parseInt(type));
 				articleVO.setHotissue(Integer.parseInt(hio));
-				articleVO.setimgFileName(imgFileName);
+				articleVO.setImgFileName(imgFileName);
 				articleService.addArticle(articleVO);
 				
 				if(imgFileName != null ) {
@@ -134,11 +137,12 @@ public class NewsController extends HttpServlet {
 				
 			} 
 			else if(action.equals("/viewArticle.do")) {
-				String articlenum = request.getParameter("articlenum");
-				System.out.println(articlenum+" <= articlenumString입니다");
-				int temp = Integer.parseInt(articlenum);
-				System.out.println(temp+" <= temp입니다");
-				articleVO = articleService.viewArticle(temp);
+				int articlenum = Integer.parseInt(request.getParameter("articlenum"));
+				System.out.println(articlenum);
+				System.out.println(articlenum+" <= int articlenum 입니다");
+				articleVO.setArticlenum(articlenum);
+				articleService.viewArticle(articleVO);
+				System.out.println("articleVO.getType: "+ articleVO.getType());
 				request.setAttribute("article", articleVO);
 				nextPage="/test/viewArticle.jsp";
 			}
