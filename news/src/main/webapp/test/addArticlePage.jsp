@@ -8,13 +8,23 @@ request.setCharacterEncoding("UTF-8");
 <c:set var="contextPath" value="${pageContext.request.contextPath}" />
 <!DOCTYPE html>
 <html>
+<script src="http://code.jquery.com/jquery-latest.min.js"></script>
 <script type="text/javascript">
+	function readURL(input) {
+		if (input.files && input.files[0]) {
+			var reader = new FileReader();
+			reader.onload = function(e) {
+				$('#preview').attr('src', e.target.result);
+			}
+			reader.readAsDataURL(input.files[0]);
+		}
+	}
 	function backToList(obj) {
 		obj.action = "${contextPath}/news/";
 		obj.submit();
 	}
 </script>
- 
+
 <head>
 <meta charset="UTF-8">
 <title>기사 작성 페이지</title>
@@ -55,25 +65,29 @@ request.setCharacterEncoding("UTF-8");
 			<tr>
 				<td align="center">특종 여부</td>
 				<td colspan="2"><select name="hotissue">
-					<option value="0">일반 기사</option>
-					<option value="1">특종</option>
-				</select>
-					</td>
+						<option value="0">일반 기사</option>
+						<option value="1">특종</option>
+				</select></td>
 
 			</tr>
-			
+
+			<tr>
+				<td align="right">이미지파일 첨부:</td>
+				<td><input type="file" name="imgFileName"
+					onchange="readURL(this);" /></td>
+				<td><img id="preview" src="#" width=200 height=200 /></td>
+			</tr>
+
 			<tr>
 				<td align="right"></td>
-				<td colspan="2">
-				<input type="submit" value="글쓰기" />
-				<input type=button value="목록보기"onClick="backToList(this.form)" />
-				</td>
+				<td colspan="2"><input type="submit" value="글쓰기" /> <input
+					type=button value="목록보기" onClick="backToList(this.form)" /></td>
 			</tr>
-			
+
 
 
 		</table>
-		
+
 		<h4 align="center">이미지 보류</h4>
 
 	</form>
