@@ -108,11 +108,11 @@ public class ArticleVO {
 		this.hotissue = hotissue;
 	}
 
-	public String getimgFileName() {
+	public String getImgFileName() {
 		return imgFileName;
 	}
 
-	public void setImg(String imgFileName) {
+	public void setImgFileName(String imgFileName) {
 		this.imgFileName = imgFileName;
 	}
 
