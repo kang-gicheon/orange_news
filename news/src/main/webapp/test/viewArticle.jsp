@@ -62,9 +62,12 @@ request.setCharacterEncoding("UTF-8");
 				<tr>
 					<td width="50" align="center" bgcolor="cyan">기사
 						이미지</td>
-					<td><img
-						 src= "${contextPath }/download.do?
-	&articlenum=${article.articlenum}&imgFileName=${article.imgFileName}" /></td>
+					<td>
+					<%-- <input type="hidden" name="originalFileName" value="${article.imgFileName }"> --%>
+					<img src= "${contextPath }/download.do?
+							imgFileName=${article.imgFileName}
+							&articlenum=${article.articlenum}" id="preview" /><br>
+					</td>
 				</tr>
 
 			</c:if>
@@ -95,7 +98,7 @@ request.setCharacterEncoding("UTF-8");
 						<td>스포츠/연예</td>
 					</c:when>
 					<c:otherwise>
-						<td>안됨...</td>
+						<td>Exception</td>
 					</c:otherwise>
 
 				</c:choose>
