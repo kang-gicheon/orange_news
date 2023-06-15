@@ -14,6 +14,10 @@ public class ArticleService {
 		articleDAO.insertNewArticle(article);
 	}
 	
+	public void viewArticle(ArticleVO article) {
+		articleDAO.selectArticle(article);
+	}
+	
 	public List<ArticleVO> listArticles(){
 		List<ArticleVO> articlesList = articleDAO.selectAllArticles();
 		return articlesList;
