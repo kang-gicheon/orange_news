@@ -7,12 +7,6 @@
 request.setCharacterEncoding("UTF-8");
 %>
 
-<c:set var="lev1" value="${coXY.getLev1()}" />
-<c:set var="coX" value="${coXY.getCoX()}" />
-<c:set var="coY" value="${coXY.getCoY()}" />
-<c:set var="nowDate" value="${coXY.getCurrentDate()}" />
-<c:set var="nowTime" value="${coXY.getCurrentTime()}" />
-
 <c:set var="contextPath" value="${pageContext.request.contextPath}" />
 
 
@@ -24,34 +18,8 @@ request.setCharacterEncoding("UTF-8");
 <title>Insert title here</title>
 <script>
 	
-	getAPI();
-	/* if ( '${ lve1 }' == null ){
-
-		console.log(${lev1});
-		
-	} else {
-		
-		let mapId = "";
-		let mapName = "";
-		 색깔 초기화 
-		$("g > *").attr('fill', '#118ac9'); 
-
-		mapId = $(this).attr('id');
-		mapName = $(this).attr('name');
-
-		let getFill1 = document.querySelector("#"+mapId);
-		let getFill2 = getFill1.querySelectorAll("path");
-
-		for(let i = 0; i < getFill2.length; i++){
-			getFill2[i].setAttribute('fill','#FF761A');
-		}
-		
-		document.getElementById("wArea").innerHTML = mapName + "<br/> 날씨정보";
-		
-	} */
-	
-	
 	$(document).ready(function() {
+		
 		$("g").click(function() {
 			
 			let mapId = "";
@@ -60,28 +28,42 @@ request.setCharacterEncoding("UTF-8");
 			mapId = $(this).attr('id');
 			mapName = $(this).attr('name');
 			
-			// 클릭한 지역의 제목 출력
+			console.log(mapName);
 			
-			
-			//controller로 보낼 내용 저장
-			var form = document.createElement("form");
-			form.setAttribute("method", "post");
-			form.setAttribute("action", '${contextPath}/twc/getco.do');
-			
-			var parentNOInput = document.createElement("input");
-			parentNOInput.setAttribute("type","hidden");
-			parentNOInput.setAttribute("name","mapName");
-			parentNOInput.setAttribute("value", mapName);
-			
-			form.appendChild(parentNOInput);
-			document.body.appendChild(form);
-			form.submit(); 
+			$.ajax({
+				
+				type : 'post',			 // 타입 (get, post, put 등등)
+			    url : '/twc/getco.do',			 // 요청할 서버url
+			    dataType : 'json',       // 데이터 타입 (html, xml, json, text 등등)
+			    data : {"mapName" : mapName},
+			    
+			    success : function(result) { // 결과 성공 콜백함수
+			        console.log(result);
+			    	getAPI(result.coX, result.coY, result.nowTime, result.nowDate);
+			    	
+			    	$("g > *").attr('fill', '#118ac9'); 
+
+					let getFill1 = document.querySelector("#"+mapId);
+					let getFill2 = getFill1.querySelectorAll("path");
+
+					for(let i = 0; i < getFill2.length; i++){
+						getFill2[i].setAttribute('fill','#FF761A');
+					}
+					
+					document.getElementById("wArea").innerHTML = mapName + "<br/> 날씨정보";
+					
+			    },
+			    
+			    error : function(request, status, error) { // 결과 에러 콜백함수
+			        console.log(error)
+			    }
+			})
 			
 		});
 		
 	});
 
-	function getAPI() {
+	function getAPI( coX, coY, time, date) {
 		// API 받아오기	
 		//받아올 단어를 담아줄 배열
 		var words = new Array();
@@ -104,15 +86,15 @@ request.setCharacterEncoding("UTF-8");
 
 		// 초 단기 실황일경우 1시간 내의 데이터만 조회 가능
 		queryParams += '&' + encodeURIComponent('base_date') + '='
-				+ encodeURIComponent('${nowDate}'); /**/
+				+ encodeURIComponent(date); /**/
 		queryParams += '&' + encodeURIComponent('base_time') + '='
-				+ encodeURIComponent('${nowTime}'); /**/
+				+ encodeURIComponent(time); /**/
 
 		// 코드 정보는 엑셀에 저장됨
 		queryParams += '&' + encodeURIComponent('nx') + '='
-				+ encodeURIComponent('${coX}'); /**/
+				+ encodeURIComponent(coX); /**/
 		queryParams += '&' + encodeURIComponent('ny') + '='
-				+ encodeURIComponent('${coY}'); /**/
+				+ encodeURIComponent(coY); /**/
 
 		xhr.open('GET', url + queryParams);
 
@@ -129,12 +111,25 @@ request.setCharacterEncoding("UTF-8");
 				let T1H = obj.response.body.items.item[3].obsrValue;
 				let REH = obj.response.body.items.item[1].obsrValue;
 				let PTY = obj.response.body.items.item[0].obsrValue;
+				let PTYString;
 				let WSD = obj.response.body.items.item[7].obsrValue;
+				
+				/* 없음(0), 비(1), 비/눈(2), 눈(3), 빗방울(5), 빗방울눈날림(6), 눈날림(7)  */
+				if( PTY =='0') PTYString = "없음";
+				else if ( PTY == '1') PTYString = "비"
+				else if ( PTY == '2') PTYString = "비/눈";
+				else if ( PTY == '3')PTYString = "눈";
+				else if ( PTY == '5') PTYString = "빗방울";
+				else if ( PTY == '6') PTYString = "빗방울눈날림";
+				else if ( PTY == '7') PTYString = "눈날림";
+				
+				if(PTY != '0') {
+					document.getElementById("PTY").innerHTML= "강수형태 :" + PTYString;
+				}
 				
 				document.getElementById("T1H").innerHTML= T1H;
 				document.getElementById("RN1").innerHTML= RN1;
 				document.getElementById("REH").innerHTML= REH;
-				document.getElementById("PTY").innerHTML= PTY;
 				document.getElementById("WSD").innerHTML= WSD;
 			}
 		};
@@ -142,6 +137,8 @@ request.setCharacterEncoding("UTF-8");
 		xhr.send('');
 		// API 받기 끝
 	}
+	
+	
 </script>
 <style>
 </style>
@@ -160,7 +157,7 @@ request.setCharacterEncoding("UTF-8");
 				<div>기온 :<span id="T1H" value="기온"></span></div>	
 				<div>강수량 : <span id="RN1" value="강수량"></span></div>
 				<div>습도 : <span id="REH" value="습도"></span></div>	
-				<div>강수형태 : <span id="PTY" value="강수형태"></span></div>	
+				<div><span id="PTY" value="강수형태"></span></div>	
 				<div>풍속 : <span id="WSD" value="풍속"></span></div>	
 			</td>
 		</tr>

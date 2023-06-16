@@ -1,8 +1,9 @@
 package weather;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
@@ -12,6 +13,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import org.json.simple.JSONObject;
 
 @WebServlet("/twc/*")
 public class TestWeatherController extends HttpServlet {
@@ -43,25 +46,46 @@ public class TestWeatherController extends HttpServlet {
 		
 		try {
 			
-			if (action.equals("/getco.do")) {	
+			if (action.equals("/getco.do")) {
+				
+				JSONObject totalObject;
+				
+				response.setContentType("application/x-json; charset=UTF-8");
+		        PrintWriter out = response.getWriter();
 				String mapName = request.getParameter("mapName");
 				
 				System.out.println(mapName);
 				
-				// mapName의 값을 받아서 weatherDAO
-				//coXY에 좌표와 현재시간을 set!
 				WeatherVO coXY = wDao.findCoordinate(mapName);
 				
-				//coXY를 바인딩
-				request.setAttribute("coXY", coXY);
-				nextPage = "/WeatherPage.jsp";	
+				System.out.println(coXY.getCoX());
+				System.out.println(coXY.getCoY());
+				System.out.println(coXY.getCurrentTime());
+				System.out.println(coXY.getCurrentDate());
+				
+				Map<String, String> map = new HashMap<>();
+				
+				map.put("coX", coXY.getCoX());
+				map.put("coY", coXY.getCoY());
+				map.put("nowTime", coXY.getCurrentTime());
+				map.put("nowDate", coXY.getCurrentDate());
+				
+				totalObject = new JSONObject(map);
+				
+				System.out.println(totalObject);
+				
+				out.print(totalObject);
+				return;
 			}
+			
+			
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
 		RequestDispatcher dispatch = request.getRequestDispatcher(nextPage);
-		dispatch.forward(request, response);
+		dispatch.forward(request, response);	
 	}
 	
 
