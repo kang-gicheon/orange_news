@@ -1,5 +1,8 @@
 package article;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.sql.Date;
 
 public class ArticleVO {
@@ -14,23 +17,19 @@ public class ArticleVO {
 	private int hotissue; // 특종여부, headline?
 	private String imgFileName; // 이미지파일 -> 저장위치에서 불러오기냐 DB자체 저장이냐?
 	private String id;
-
+	
 	// react 테이블 컬럼들(getter/setter 미생성)
-	private String actype; // 리액션 종류(type) 비고: article 테이블에서 똑같은 컬럼명이 있음
-	private int rcount; // 각 리액션 갯수
+		private String actype; // 리액션 종류(type) 비고: article 테이블에서 똑같은 컬럼명이 있음
+		private int rcount; // 각 리액션 갯수
+		
 
-	// reply 테이블 컬럼들 (getter/setter 미생성)
-	private Date wdate; // 작성 날짜
-	private String rcomment; // 댓글
-	private int good; // 반응(좋아요)
-	private int bad; // 반응(싫어요)
 
 	public ArticleVO() {
 		System.out.println("===> ArticleVO 생성자 호출");
 	}
 
 	public ArticleVO(String title, Date writedate, Date updatedate, String content, int articlenum, int type,
-			int recCount, int hotissue, String imgFileName, String id) {
+			int recCount, int hotissue, String imgFileName, String id, String actype, int rcount) {
 		super();
 		this.title = title;
 		this.writedate = writedate;
@@ -42,6 +41,9 @@ public class ArticleVO {
 		this.hotissue = hotissue;
 		this.imgFileName = imgFileName;
 		this.id = id;
+		this.actype=actype;
+		this.rcount=rcount;
+		
 	}
 
 	public String getTitle() {
@@ -108,12 +110,20 @@ public class ArticleVO {
 		this.hotissue = hotissue;
 	}
 
-	public String getimgFileName() {
+	public String getImgFileName() {
+		try {
+			if(imgFileName != null && imgFileName.length()!=0) {
+				imgFileName = URLDecoder.decode(imgFileName,"UTF-8");
+			}
+		}catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
 		return imgFileName;
 	}
 
-	public void setImg(String imgFileName) {
-		this.imgFileName = imgFileName;
+	public void setImgFileName(String imgFileName) {
+		this.imgFileName= imgFileName;
+		
 	}
 
 	public String getId() {
@@ -123,4 +133,26 @@ public class ArticleVO {
 	public void setId(String id) {
 		this.id = id;
 	}
+
+	
+	public String getActype() {
+		return actype;
+	}
+
+	public void setActype(String actype) {
+		this.actype = actype;
+	}
+
+	public int getRcount() {
+		return rcount;
+	}
+
+	public void setRcount(int rcount) {
+		this.rcount = rcount;
+	}
+
+	
+	
+	
+	
 }
