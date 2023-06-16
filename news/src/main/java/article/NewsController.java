@@ -21,16 +21,20 @@ import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.FileUtils;
 
+import member.MemberVO;
+
 @WebServlet("/news/*")
 public class NewsController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private static String ARTICLE_IMAGE_REPO = "C:\\news\\article_image";
-	//ArticleDAO articleDAO;
+	// ArticleDAO articleDAO;
 	ArticleVO articleVO;
 	ArticleService articleService;
+	MemberVO memberVO;
 
 	public void init(ServletConfig config) throws ServletException {
 		articleVO = new ArticleVO();
+		memberVO = new MemberVO();
 		articleService = new ArticleService();
 	}
 
@@ -47,8 +51,8 @@ public class NewsController extends HttpServlet {
 	private void doHandle(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		String nextPage = "";
-		String LoginOX = "X";
-		String ReportOX = "X";
+		String loginId = memberVO.getId();
+		int report = memberVO.getReporter();
 		request.setCharacterEncoding("utf-8");
 		response.setContentType("text/html;charset=utf-8");
 		String action = request.getPathInfo();
@@ -61,14 +65,14 @@ public class NewsController extends HttpServlet {
 				articlesList = articleService.listArticles();
 				request.setAttribute("articlesList", articlesList);
 				nextPage = "/test/mainPage.jsp";
-				
+
 			} else if (action.equals("/member.do")) { // 회원가입
 				System.out.println("회원가입");
 			}
 
 			else if (action.equals("/login.do")) { // 로그인
 				System.out.println("로그인");
-				nextPage = "/test/loginPage.jsp";
+				nextPage = "/sign_in/login.jsp";
 			}
 
 			else if (action.equals("/articleForm.do")) { // 기사 클릭 (기사 조회)
@@ -80,75 +84,93 @@ public class NewsController extends HttpServlet {
 
 				System.out.println("기사 작성 폼 요청");
 
+//				 loginId="asd";
+//				report=1; //임시데이터
+//
 //				while (true) {
-//					if (LoginOX.equals("X")) { // 로그인이 안 되어있을 경우
+//					if (loginId==null) { // 로그인이 안 되어있을 경우
 //						PrintWriter pw = response.getWriter();
 //						pw.print("<script>" + " alert('로그인이 필요합니다.');" + " location.href='" + request.getContextPath()
 //								+ "/news/login.do';" + "</script>");
 //						return;
 //					}
-//
-//					if (LoginOX.equals("O") && ReportOX.equals("X")) { // 로그인은 되어있으나 기자 계정이 아닌 경우
+//					if (loginId!=null && report==0) { // 로그인은 되어있으나 기자 계정이 아닌 경우
 //						PrintWriter pw = response.getWriter();
 //						pw.print("<script>" + " alert('기자 계정이 아닙니다.');" + " location.href='" + request.getContextPath()
 //								+ "/news/';" + "</script>");
 //						return;
 //					}
-//
 //					nextPage = "/test/addArticlePage.jsp";
 //
 //				}
 				nextPage = "/test/addArticlePage.jsp";
+
 			}
 
 			else if (action.equals("/addArticle.do")) { // 기사 작성 (기자로 로그인시)
 				System.out.println("기사작성액션받음");
-				
+
 				Map<String, String> articleMap = upload(request, response);
 				String title = articleMap.get("title");
 				String content = articleMap.get("content");
 				String type = articleMap.get("articleType");
 				String hio = articleMap.get("hotissue");
 				String imgFileName = articleMap.get("imgFileName");
-				System.out.println("이미지 파일 상태 "+imgFileName);
 				articleVO.setTitle(title);
 				articleVO.setContent(content);
 				articleVO.setType(Integer.parseInt(type));
 				articleVO.setHotissue(Integer.parseInt(hio));
-				articleVO.setimgFileName(imgFileName);
+				articleVO.setImgFileName(imgFileName);
 				articleService.addArticle(articleVO);
-				
-				if(imgFileName != null ) {
-					System.out.println("들어오는지");
-					File srcFile = new File(ARTICLE_IMAGE_REPO+"\\"+"temp"+"\\"+imgFileName);
-					File destDir = new File(ARTICLE_IMAGE_REPO+"\\"+title); //제목 기준으로 디렉토리 생성
+
+				if (imgFileName != null) {
+					File srcFile = new File(ARTICLE_IMAGE_REPO + "\\" + "temp" + "\\" + imgFileName);
+					File destDir = new File(ARTICLE_IMAGE_REPO + "\\" + title); // 제목 기준으로 디렉토리 생성
 					destDir.mkdirs();
 					FileUtils.moveFileToDirectory(srcFile, destDir, true);
 					srcFile.delete();
 				}
-				
+
 				PrintWriter pw = response.getWriter();
-				pw.print("<script>"+" alert('새 기사를 작성했습니다.');"+" location.href='"
-						+request.getContextPath()+"/news/';" +"</script>");
-						return; 
-				
-			} 
-			else if(action.equals("/viewArticle.do")) {
-				String articlenum = request.getParameter("articlenum");
-				System.out.println(articlenum+" <= articlenumString입니다");
-				int temp = Integer.parseInt(articlenum);
-				System.out.println(temp+" <= temp입니다");
-				articleVO = articleService.viewArticle(temp);
+				pw.print("<script>" + " alert('새 기사를 작성했습니다.');" + " location.href='" + request.getContextPath()
+						+ "/news/';" + "</script>");
+				return;
+
+			} else if (action.equals("/viewArticle.do")) {
+				int articlenum = Integer.parseInt(request.getParameter("articlenum"));
+				System.out.println(articlenum + " <= articlenumString입니다");
+				articleVO.setArticlenum(articlenum);
+				articleService.viewArticle(articleVO);
 				request.setAttribute("article", articleVO);
-				nextPage="/test/viewArticle.jsp";
+				nextPage = "/test/viewArticle.jsp";
+			}
+
+			else if (action.equals("/updateReact.do")) {
+				System.out.println("반응 업데이트");
+
+				// int articlenum = Integer.parseInt(request.getParameter("articlenum"));
+				// System.out.println(articlenum + " <= articlenumString입니다");
+
+				String type = request.getParameter("react");
+				System.out.println(type + " <= type입니다");
+
+				// articleVO.setArticlenum(articlenum);
+				articleVO.setActype(type);
+				articleService.updateAction(articleVO);
+
+				int articlenum = articleVO.getArticlenum();
+				PrintWriter pw = response.getWriter();
+				pw.print("<script>" + " alert('반응이 등록되었습니다.');" + " location.href='" + request.getContextPath()
+						+ "/news/viewArticle.do?articlenum=" + articlenum + "'; </script>");
+
+				return;
 			}
 
 			else {
 				System.out.println("그 외");
 				PrintWriter pw = response.getWriter();
-				pw.print("<script> location.href='"
-						+request.getContextPath()+"/news';" +"</script>");
-						return; 
+				pw.print("<script> location.href='" + request.getContextPath() + "/news';" + "</script>");
+				return;
 			}
 
 			RequestDispatcher dispatch = request.getRequestDispatcher(nextPage);
