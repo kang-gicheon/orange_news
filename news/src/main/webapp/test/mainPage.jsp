@@ -18,6 +18,9 @@ request.setCharacterEncoding("UTF-8");
 	<a href="${contextPath }/news/addarticleForm.do">
 		<p>기사 작성</p>
 	</a>
+	<a href="${contextPath }/news/login.do">
+		<p>로그인</p>
+	</a>
 
 	<table align="center" border="2" width="80%">
 
@@ -38,9 +41,11 @@ request.setCharacterEncoding("UTF-8");
 					<tr align="center">
 						<td width="5%">${articleNum.count }</td>
 						<td width="30%"><a href="${contextPath}/news/viewArticle.do?articlenum=${article.articlenum}">
-						<img src="${contextPath }/download.do?&articlenum=${article.articlenum}
-						&imgFileName=${article.imgFileName}"
-							id="preview"  style ="width:200px;"/></a></td>
+						<img src="${contextPath }/download.do?&title=${article.title}&imgFileName=${article.imgFileName}"
+							id="preview"  style ="width:200px; height:150px;" /></a><br>
+							<a>${article.title} - ${article.id }</a>
+							</td>
+							
 					</tr>
 				</c:forEach>
 			</c:when>
