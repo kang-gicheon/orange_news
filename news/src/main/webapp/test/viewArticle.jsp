@@ -33,45 +33,10 @@ request.setCharacterEncoding("UTF-8");
 <body>
 	<h1>기사 클릭시 나오는 기사 페이지</h1>
 	<form name="frmArticle" method="post" action="${contextPath }">
-		<table border="1" align="center">
-			<tr>
-				<td width="50" align="center" bgcolor="cyan">글번호</td>
-				<td><input type="text" value="${article.articlenum }" disabled />
-					<input type="hidden" name="articleNO" value="${article.articlenum}" />
-				</td>
-			</tr>
-			<tr>
-				<td width="50" align="center" bgcolor="cyan">기자</td>
-				<td><input type="text" value="${article.id }" name="id"
-					disabled /></td>
-			</tr>
-			<tr>
-				<td width="50" align="center" bgcolor="cyan">기사 제목</td>
-				<td><input type="text" value="${article.title }" name="title"
-					id="i_title" disabled /></td>
-			</tr>
-
-			<tr>
-				<td width="50" align="center" bgcolor="cyan">기사 내용</td>
-				<td><textarea rows="20" cols="60" name="content" id="i_content"
-						disabled> ${article.content }</textarea></td>
-			</tr>
-
-			<c:if
-				test="${not empty article.imgFileName && article.imgFileName!='null' }">
-				<tr>
-					<td width="50" align="center" bgcolor="cyan">기사
-						이미지</td>
-					<td><img
-						 src= "${contextPath }/download.do?
-	&articlenum=${article.articlenum}&imgFileName=${article.imgFileName}" /></td>
-				</tr>
-
-			</c:if>
-
+		<table border=1 align="center">
 			<tr>
 
-				<td width="5%" align="center" bgcolor="cyan" >기사 종류</td>
+				<td width="5%" align="center" bgcolor="cyan">기사 종류</td>
 				<c:choose>
 					<c:when test="${article.type==1}">
 						<td>경제/정치</td>
@@ -95,28 +60,78 @@ request.setCharacterEncoding("UTF-8");
 						<td>스포츠/연예</td>
 					</c:when>
 					<c:otherwise>
-						<td>안됨...</td>
+						<td>오류</td>
 					</c:otherwise>
 
 				</c:choose>
 
 			</tr>
+			<tr>
+				<td width="50" align="center" bgcolor="cyan">기자</td>
+				<td align="center">${article.id }</td>
+			</tr>
+			<tr>
+				<td width="50" align="center" bgcolor="cyan">기사 제목</td>
+				<td align="center">${article.title }</td>
+			</tr>
+
+			<tr>
+				<td width="50" align="center" bgcolor="cyan">기사 내용</td>
+				<td align="center">${article.content }</td>
+			</tr>
+
+			<c:if
+				test="${not empty article.imgFileName && article.imgFileName!='null' }">
+				<tr>
+					<td width="50" align="center" bgcolor="cyan">기사 이미지</td>
+
+					<td><img
+						src="${contextPath }/download.do?&title=${article.title}&imgFileName=${article.imgFileName}"
+						id="preview" /></td>
+				</tr>
+
+			</c:if>
 
 
 			<tr>
 				<td rowspan="2" align="center" bgcolor="cyan">등록일자</td>
-				<td><input type=text
-					value="<fmt:formatDate value="${article.writedate}"/>" /></td>
+				<td>${article.writedate}</td>
 			</tr>
 
 
 
 		</table>
+		</form>
+		<form method="post" action="${contextPath}/news/updateReact.do" name ="reactform">
+			<table align="center">
+				<!-- checkbox로 바꾸기 -->
+				<tr>
+					<td><input type="radio" name="react" value="좋아요"></input></td>
+					<td><input type="radio" name="react" value="훈훈해요"></input></td>
+					<td><input type="radio" name="react" value="슬퍼요"></input></td>
+					<td><input type="radio" name="react" value="화나요"></input></td>
+					<td><input type="radio" name="react" value="후속기사 원해요"></input></td>
 
-		<tr id="tr_btn">
-			<td colspan=2 align=center><input type=button value="리스트로 돌아가기"
-				onClick="backToList(this.form)"></td>
-		</tr>
-	</form>
+				</tr>
+				<tr>
+					<td><a>좋아요 : ${article.rcount} </a></td>
+				</tr>
+
+				<tr>
+
+					<td colspan=5 align=center><input type=submit value="반응남기기" />
+					</td>
+
+					<td colspan=5 align=center><input type=reset value="Reset"></td>
+				</tr>
+				
+				<tr>
+				<td colspan=5 align=center><input type=button value="리스트로 돌아가기"
+					onClick="backToList(this.form)"></td>
+			</tr>
+			</table>
+		</form>
+		
+	
 </body>
 </html>
