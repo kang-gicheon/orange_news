@@ -1,7 +1,8 @@
-DROP TABLE MEMBER;
-DROP TABLE ARTICLE;
-DROP TABLE REPLY;
 DROP TABLE REACT;
+DROP TABLE REPLY;
+DROP TABLE ARTICLE;
+DROP TABLE MEMBER;
+
 
 DROP SEQUENCE SEQ_ANUM; 
 
@@ -15,7 +16,7 @@ CREATE TABLE member ( --회원 정보 테이블
     name varchar2(50),  -- 이름
     rep int default 0,  -- 0이 일반 계정
     pnum varchar2(50),-- 휴대폰 번호
-    email varchar2(50), -- 이메일주소
+    address varchar2(50), -- 주소 
     
     PRIMARY KEY (id)
 );
@@ -30,7 +31,7 @@ CREATE TABLE ARTICLE ( --기사 정보 테이블
     type int,       -- 기사 종류
     reccount int,   -- 추천 수
     hotissue int DEFAULT 0,     -- 특종 여부
-    img blob,    -- 이미지
+    img varchar2(100),    -- 이미지
     
     ID VARCHAR2(50) REFERENCES MEMBER(ID), -- 작성자 
     
@@ -49,9 +50,27 @@ CREATE TABLE REPLY (
 );
 
 CREATE TABLE REACT (
-    r_type varchar(20),   -- 반응 종류
+    r_type varchar(50),   -- 반응 종류
     rcount int,  -- 반응 갯수
     
     articlenum int REFERENCES ARTICLE(articlenum) 
 );
 
+
+-- 임시 데이터 삽입
+
+INSERT INTO MEMBER (id, pwd, name, rep, pnum, address) 
+values ('testID', 'testpwd', 'testname', 0, '01012345678', 'testaddress');
+
+INSERT INTO MEMBER (id, pwd, name, rep, pnum, address) 
+values ('testID2', 'testpwd2', 'testname2', 0, '01059859845', 'testaddress2');
+
+INSERT INTO MEMBER (id, pwd, name, rep, pnum, address) 
+values ('reporter1', 'repopwd', '기자1', 1, '01078784545', 'testaddress3');
+
+INSERT INTO ARTICLE (title, writedate, updatedate, content, articlenum, type, reccount, hotissue, img, id)
+values('testTITLE2', sysdate, sysdate, 'testContent22', seq_anum.nextval, 4, 2, 0, 'sea3.png', 'reporter1');
+
+
+INSERT INTO REACT (r_type, rcount, articlenum) values ('좋아요',0,1);
+commit;
