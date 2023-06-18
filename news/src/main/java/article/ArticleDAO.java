@@ -97,10 +97,10 @@ public class ArticleDAO {
 			int type = article.getType();
 			int hotissue = article.getHotissue();
 			String img = article.getImgFileName();
-		//	String id = article.getId();
+			String id = article.getId();
 			
 			String query = "INSERT INTO ARTICLE (title, writedate, updatedate, content, articlenum, type, reccount, hotissue, img, id)"
-					+ " values(?, sysdate, sysdate, ?, seq_anum.nextval, ?, 0, ?, ?, 'reporter1')";
+					+ " values(?, sysdate, sysdate, ?, seq_anum.nextval, ?, 0, ?, ?, ?)";
 			
 		//	String query2 = "SELECT articlenum FROM ARTICLE WHERE title =?";
 			
@@ -110,7 +110,8 @@ public class ArticleDAO {
 			pstmt.setString(2, content);
 			pstmt.setInt(3, type);
 			pstmt.setInt(4, hotissue);
-			pstmt.setString(5,img);
+			pstmt.setString(5, img);
+			pstmt.setString(6, id);
 			pstmt.executeUpdate();
 			pstmt.close();
 		

@@ -18,7 +18,7 @@ request.setCharacterEncoding("UTF-8");
 	<a href="${contextPath }/news/addarticleForm.do">
 		<p>기사 작성</p>
 	</a>
-	<a href="${contextPath }/news/login.do">
+	<a href="${contextPath }/member/loginForm.do">
 		<p>로그인</p>
 	</a>
 

@@ -13,5 +13,9 @@
 			<attribute name="owner.project.facets" value="jst.web"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/lombok.jar"/>
+	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/jstl-1.2.jar"/>
+	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/json-20230227.jar"/>
+	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/jackson-databind-2.14.2.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

@@ -1,4 +1,4 @@
-package news.member;
+package member;
 
 public class MemberVO {
 	//member 테이블 컬럼들
@@ -7,7 +7,8 @@ public class MemberVO {
 	private String name;		//이름
 	private int reporter=0;		//기자 계정 유효성 검사?
 	private String pnum;		//휴대폰 번호
-	private String address;		//주소
+	private String email;		//주소
+	
 	
 	public MemberVO() {
 		System.out.println("===> MemberVO 생성자 호출");
@@ -53,12 +54,12 @@ public class MemberVO {
 		this.pnum = pnum;
 	}
 
-	public String getAddress() {
-		return address;
+	public String getEmail() {
+		return email;
 	}
 
-	public void setAddress(String address) {
-		this.address = address;
-	}
+	public void setEmail(String email) {
+		this.email = email;
+	}	
 	
 }
