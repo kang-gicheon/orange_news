@@ -59,13 +59,13 @@ CREATE TABLE REACT (
 
 -- 임시 데이터 삽입
 
-INSERT INTO MEMBER (id, pwd, name, rep, pnum, address) 
-values ('testID', 'testpwd', 'testname', 0, '01012345678', 'testaddress');
+INSERT INTO MEMBER (id, pwd, name, rep, pnum, email) 
+values ('testID', 'testpwd', 'testname', 0, '01012345678', 'test01@address');
 
-INSERT INTO MEMBER (id, pwd, name, rep, pnum, address) 
+INSERT INTO MEMBER (id, pwd, name, rep, pnum, email) 
 values ('testID2', 'testpwd2', 'testname2', 0, '01059859845', 'testaddress2');
 
-INSERT INTO MEMBER (id, pwd, name, rep, pnum, address) 
+INSERT INTO MEMBER (id, pwd, name, rep, pnum, email) 
 values ('reporter1', 'repopwd', '기자1', 1, '01078784545', 'testaddress3');
 
 INSERT INTO ARTICLE (title, writedate, updatedate, content, articlenum, type, reccount, hotissue, img, id)
