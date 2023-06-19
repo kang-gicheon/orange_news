@@ -52,6 +52,8 @@ public class NewsController extends HttpServlet {
 
 	private void doHandle(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		
+		
 		String nextPage = "";
 		String loginId = memberVO.getId();
 		int report = memberVO.getReporter();
@@ -61,6 +63,11 @@ public class NewsController extends HttpServlet {
 		
 		//쿠키
 		Cookie[] cookies = request.getCookies();
+		HttpSession session;
+		Cookie articlenumCookie;
+		
+		//쿠키(path:/news)값 삭제 -> 메인페이지로 이동시 기사 쿠키 삭제
+		deleteCookie(cookies, response);
 		
 		System.out.println("action: " + action); // 어떤 액션인지 콘솔에서 확인용 (나중에 지워짐)
 
@@ -152,8 +159,13 @@ public class NewsController extends HttpServlet {
 			} else if (action.equals("/viewArticle.do")) {
 				int articlenum = Integer.parseInt(request.getParameter("articlenum"));
 				System.out.println(articlenum + " <= articlenumString입니다");
+				
+				articlenumCookie = new Cookie("articlenum", Integer.toString(articlenum));
+				articlenumCookie.setMaxAge(60*60*24);
+				response.addCookie(articlenumCookie);
+				
 				articleVO.setArticlenum(articlenum);
-				articleService.viewArticle(articleVO);
+				articleService.viewArticle(articleVO);				
 				request.setAttribute("article", articleVO);
 				nextPage = "/test/viewArticle.jsp";
 			}
@@ -253,7 +265,7 @@ public class NewsController extends HttpServlet {
 	private void deleteCookie(Cookie cookies[], HttpServletResponse response) throws ServletException, IOException {
 		if(cookies != null) {
 			for(Cookie cookie : cookies) {
-					cookie.setPath("/");
+					cookie.setPath("/news");
 					cookie.setMaxAge(0);
 					response.addCookie(cookie);
 					
