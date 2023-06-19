@@ -60,25 +60,70 @@ public class MemberController extends HttpServlet {
 		try {
 			if(action==null) {			//개인 계정 페이지
 				
-				nextPage="/";
-			}else if(action.equals("/")) {		//틀
-				
-				
-				nextPage="/";
-			}else if(action.equals("/")) {		//틀
-				
-				
-				nextPage="/";
-			}else if(action.equals("/deleteAccount.do")) {		//회원탈퇴
+				nextPage="/myPage/myPage.jsp";
+			}else if(action.equals("/mypage.do")) {			//개인 계정페이지
 				manageCookieId(cookies, memberVO);
-				String id = memberVO.getId();
-				memberDAO.withdraw(id);
+				if(memberVO.getId() == null) {
+					PrintWriter pw = response.getWriter();
+					pw.print("<script>" + " alert('로그인 화면으로 이동합니다');"
+										+ " location.href='"
+										+ request.getContextPath()
+										+ "/member/loginForm.do"
+										+ "';"
+										+ "</script>");
+					return;
+				}
+				memberDAO.getMemberInfo(memberVO);
+				request.setAttribute("memberVO", memberVO);
+				nextPage="/myPage/myPage.jsp";
+			}else if(action.equals("/join.do")) {		//회원가입페이지로 이동
+				manageCookieId(cookies, memberVO);
+				if(memberVO.getId() != null ) {
+					PrintWriter pw = response.getWriter();
+					pw.write("<script>" + "alert('로그인 중 입니다.');"
+									+ " location.href='"
+									+ request.getContextPath()
+									+ "/member/mypage.do"
+									+ "';"
+									+ "</script>");
+					return;
+				}
+				request.setAttribute("memberVO", memberVO);
+				nextPage="/sign_in/join.jsp";
+			}else if(action.equals("/joining.do")) {		//회원가입 절차 진행
+				String id=request.getParameter("id");
+				String pwd=request.getParameter("pwd");
+				String name=request.getParameter("name");
+				int rep=0;		//기자 계정 부여에 대해서
+				String pnum=request.getParameter("pnum");
+				String email=request.getParameter("email");
+				System.out.println("아이디: "+id);
+				System.out.println("비밀번호: "+pwd);
+				System.out.println("이름: "+ name);
+				System.out.println("기자계정값: "+rep);
+				System.out.println("휴대폰번호: "+pnum);
+				System.out.println("이메일: "+email);
 				memberVO.setId(id);
-				session=request.getSession();
-				session.removeAttribute("loginIdSess");
-				deleteCookie(cookies, response);
+				memberVO.setPwd(pwd);
+				memberVO.setName(name);
+				memberVO.setReporter(rep);
+				memberVO.setPnum(pnum);
+				memberVO.setEmail(email);
+				
+				boolean isjoined = memberDAO.join(memberVO);
+				if(!isjoined) {
+					PrintWriter pw = response.getWriter();
+					pw.print("<script>" + "alert('이미 존재하는 계정입니다');"
+										+ " location.href='"
+										+ request.getContextPath()
+										+ "/member/join.do"
+										+ "';"
+										+ "</script>");
+					return;
+				}
+				
 				PrintWriter pw = response.getWriter();
-				pw.write("<script>" + "alert('회원탈퇴가 완료되었습니다.');"
+				pw.print("<script>" + "alert('회원가입을 축하드립니다.');"
 									+ " location.href='"
 									+ request.getContextPath()
 									+ "/member/loginForm.do"
@@ -86,9 +131,146 @@ public class MemberController extends HttpServlet {
 									+ "</script>");
 				return;
 				
-			}else if(action.equals("/")) {		//틀
+			}else if(action.equals("/loginForm.do")) {		//로그인입력 창 보내기
+				memberVO.setId(null);
+				manageCookieId(cookies, memberVO);
+				System.out.println("로그인 중인 아이디: " + memberVO.getId());
+				if(memberVO.getId() != null ) {
+					PrintWriter pw = response.getWriter();
+					pw.write("<script>" + "alert('로그인 중 입니다.');"
+										+ " location.href='"
+										+ request.getContextPath()
+										+ "/news"
+										+ "';"
+										+ "</script>");
+					return;
+				}
+				nextPage="/sign_in/sign_in.jsp";
+			}else if(action.equals("/login.do")) {		//로그인 데이터 받기
+				String id=request.getParameter("id");
+				String pwd=request.getParameter("pwd");
 				
-				nextPage="/";
+				memberVO.setId(id);
+				memberVO.setPwd(pwd);
+				boolean loginValue=memberDAO.login(memberVO);
+				System.out.println("로그인 값: " + loginValue);
+				
+				if(loginValue) {			//로그인 성공시
+					request.setAttribute("memberVO", memberVO);
+					
+					loginCookie = new Cookie("loginId", memberVO.getId());
+					loginCookie.setPath("/");
+					loginCookie.setMaxAge(60 * 60 * 24);
+					response.addCookie(loginCookie);
+					
+					session=request.getSession();
+					session.setAttribute("loginIdSess", memberVO.getId());
+					nextPage="/interchange/tonews.jsp";
+				}
+				else {						//로그인 실패시
+					memberVO.setId(null);
+					memberVO.setName(null);
+					memberVO.setPwd(null);
+					memberVO.setPnum(null);
+					memberVO.setEmail(null);
+					PrintWriter pw = response.getWriter();
+					pw.print("<script>" + "alert('로그인에 실패하였습니다');"
+										+ " location.href='"
+										+ request.getContextPath()
+										+ "/member/loginForm.do"
+										+ "';"
+										+ "</script>");
+					return;
+				}
+				
+			}else if(action.equals("/logout.do")) {		//로그아웃
+				memberVO.setId(null);
+				memberVO.setName(null);
+				memberVO.setPwd(null);
+				memberVO.setPnum(null);
+				memberVO.setEmail(null);
+				loginCookie = null;
+				deleteCookie(cookies, response);
+				
+				System.out.println("logOut confirm - id value: " + memberVO.getId());
+				
+				session.removeAttribute("loginIdSess");
+				PrintWriter pw = response.getWriter();
+				pw.print("<script>" + " alert('로그아웃 되었습니다.');"
+									+ " location.href='"
+									+ request.getContextPath()
+									+ "/news"
+									+ "';"
+									+ "</script>");
+				return;
+			}else if(action.equals("/modmember.do")) {		//회원수정 페이지로 이동
+				memberVO.setId(null);
+				manageCookieId(cookies, memberVO);
+				System.out.println("로그인 중인 아이디: "+memberVO.getId());
+				if(memberVO.getId() == null ) {
+					PrintWriter pw = response.getWriter();
+					pw.write("<script>" + "alert('로그아웃 상태입니다.');"
+									+ " location.href='"
+									+ request.getContextPath()
+									+ "/member/loginForm.do"
+									+ "';"
+									+ "</script>");
+					return;
+				}
+				request.setAttribute("memberVO", memberVO);
+				nextPage="/modconfirm/confirmForm.jsp";			//하기 전에 계정 확인
+			}else if(action.equals("/modmemberForm.do")) {		//회원정보 수정 페이지
+				manageCookieId(cookies, memberVO);
+				String id = memberVO.getId();
+				String pwd = request.getParameter("pwd");
+				memberVO.setPwd(pwd);
+				System.out.println("id:"+id + "/ password:" + pwd);
+				boolean loginValue=memberDAO.login(memberVO);
+				if(!loginValue) {
+					PrintWriter pw = response.getWriter();
+					pw.write("<script>"	+ "alert('비밀번호가 맞지 않습니다.');"
+										+ "location.href='"
+										+ request.getContextPath()
+										+ "/member/mypage.do"
+										+ "';"
+										+ "</script>");
+					return;
+				}
+				request.setAttribute("memberVO", memberVO);
+				nextPage="/modconfirm/modmemberForm.jsp";
+			}else if(action.equals("/mod.do")) {		//회원정보 수정 데이터 처리
+				manageCookieId(cookies, memberVO);
+				String id = memberVO.getId();
+				String pwd = request.getParameter("pwd");
+				String name = request.getParameter("name");
+				String pnum = request.getParameter("pnum");
+				String email = request.getParameter("email");
+				memberVO.setPwd(pwd);
+				memberVO.setName(name);
+				memberVO.setPnum(pnum);
+				memberVO.setEmail(email);
+				System.out.println("id:"+id + "/ new password:" + pwd);
+				if(memberVO.getId() == null ) {
+					PrintWriter pw = response.getWriter();
+					pw.write("<script>" + "alert('로그아웃 상태입니다.');"
+										+ " location.href='"
+										+ request.getContextPath()
+										+ "/member/loginForm.do"
+										+ "';"
+										+ "</script>");
+					return;
+				}
+				memberDAO.editInfo(memberVO);
+				request.setAttribute("memberVO", memberVO);
+
+				PrintWriter pw = response.getWriter();
+				pw.write("<script>" + "alert('회원정보가 수정되었습니다.');"
+									+ " location.href='"
+									+ request.getContextPath()
+									+ "/member/mypage.do"
+									+ "';"
+									+ "</script>");
+				return;
 			}else if(action.equals("/findid.do")) {		//아이디 찾기
 				manageCookieId(cookies, memberVO);
 				System.out.println("로그인 중인 아이디: "+memberVO.getId());
@@ -185,222 +367,19 @@ public class MemberController extends HttpServlet {
 				}
 				request.setAttribute("memberVO", memberVO);
 				nextPage="/account_findresult/account_pwd.jsp";
-			}else if(action.equals("/")) {		//틀
-				
-				nextPage="/";
-			}else if(action.equals("/join.do")) {		//회원가입페이지로 이동
-				manageCookieId(cookies, memberVO);
-				if(memberVO.getId() != null ) {
-					PrintWriter pw = response.getWriter();
-					pw.write("<script>" + "alert('로그인 중 입니다.');"
-									+ " location.href='"
-									+ request.getContextPath()
-									+ "/member/mypage.do"
-									+ "';"
-									+ "</script>");
-					return;
-				}
-				request.setAttribute("memberVO", memberVO);
-				nextPage="/sign_in/join.jsp";
-			}else if(action.equals("/joining.do")) {		//회원가입 절차 진행
-				String id=request.getParameter("id");
-				String pwd=request.getParameter("pwd");
-				String name=request.getParameter("name");
-				int rep=0;		//기자 계정 부여에 대해서
-				String pnum=request.getParameter("pnum");
-				String email=request.getParameter("email");
-				System.out.println("아이디: "+id);
-				System.out.println("비밀번호: "+pwd);
-				System.out.println("이름: "+ name);
-				System.out.println("기자계정값: "+rep);
-				System.out.println("휴대폰번호: "+pnum);
-				System.out.println("이메일: "+email);
-				memberVO.setId(id);
-				memberVO.setPwd(pwd);
-				memberVO.setName(name);
-				memberVO.setReporter(rep);
-				memberVO.setPnum(pnum);
-				memberVO.setEmail(email);
-				
-				boolean isjoined = memberDAO.join(memberVO);
-				if(!isjoined) {
-					PrintWriter pw = response.getWriter();
-					pw.print("<script>" + "alert('이미 존재하는 계정입니다');"
-										+ " location.href='"
-										+ request.getContextPath()
-										+ "/member/join.do"
-										+ "';"
-										+ "</script>");
-					return;
-				}
-				
-				PrintWriter pw = response.getWriter();
-				pw.print("<script>" + "alert('회원가입을 축하드립니다.');"
-									+ " location.href='"
-									+ request.getContextPath()
-									+ "/member/loginForm.do"
-									+ "';"
-									+ "</script>");
-				return;
-				
-			}else if(action.equals("/modmember.do")) {		//회원수정 페이지로 이동
-				memberVO.setId(null);
-				manageCookieId(cookies, memberVO);
-				System.out.println("로그인 중인 아이디: "+memberVO.getId());
-				if(memberVO.getId() == null ) {
-					PrintWriter pw = response.getWriter();
-					pw.write("<script>" + "alert('로그아웃 상태입니다.');"
-									+ " location.href='"
-									+ request.getContextPath()
-									+ "/member/loginForm.do"
-									+ "';"
-									+ "</script>");
-					return;
-				}
-				request.setAttribute("memberVO", memberVO);
-				nextPage="/modconfirm/confirmForm.jsp";			//하기 전에 계정 확인
-			}else if(action.equals("/modmemberForm.do")) {		//회원정보 수정
+			}else if(action.equals("/deleteAccount.do")) {		//회원탈퇴
 				manageCookieId(cookies, memberVO);
 				String id = memberVO.getId();
-				String pwd = request.getParameter("pwd");
-				memberVO.setPwd(pwd);
-				System.out.println("id:"+id + "/ password:" + pwd);
-				boolean loginValue=memberDAO.login(memberVO);
-				if(!loginValue) {
-					PrintWriter pw = response.getWriter();
-					pw.write("<script>"	+ "alert('비밀번호가 맞지 않습니다.');"
-										+ "location.href='"
-										+ request.getContextPath()
-										+ "/member/mypage.do"
-										+ "';"
-										+ "</script>");
-					return;
-				}
-				request.setAttribute("memberVO", memberVO);
-				nextPage="/modconfirm/modmemberForm.jsp";
-			}else if(action.equals("/mod.do")) {		//회원정보 수정 작업
-				manageCookieId(cookies, memberVO);
-				String id = memberVO.getId();
-				String pwd = request.getParameter("pwd");
-				String name = request.getParameter("name");
-				String pnum = request.getParameter("pnum");
-				String email = request.getParameter("email");
-				memberVO.setPwd(pwd);
-				memberVO.setName(name);
-				memberVO.setPnum(pnum);
-				memberVO.setEmail(email);
-				System.out.println("id:"+id + "/ new password:" + pwd);
-				if(memberVO.getId() == null ) {
-					PrintWriter pw = response.getWriter();
-					pw.write("<script>" + "alert('로그아웃 상태입니다.');"
-										+ " location.href='"
-										+ request.getContextPath()
-										+ "/member/loginForm.do"
-										+ "';"
-										+ "</script>");
-					return;
-				}
-				memberDAO.editInfo(memberVO);
-				request.setAttribute("memberVO", memberVO);
-
-				PrintWriter pw = response.getWriter();
-				pw.write("<script>" + "alert('회원정보가 수정되었습니다.');"
-									+ " location.href='"
-									+ request.getContextPath()
-									+ "/member/mypage.do"
-									+ "';"
-									+ "</script>");
-				return;
-				
-			}else if(action.equals("/loginForm.do")) {		//로그인입력 창 보내기
-				memberVO.setId(null);
-				manageCookieId(cookies, memberVO);
-				System.out.println("로그인 중인 아이디: " + memberVO.getId());
-				if(memberVO.getId() != null ) {
-					PrintWriter pw = response.getWriter();
-					pw.write("<script>" + "alert('로그인 중 입니다.');"
-										+ " location.href='"
-										+ request.getContextPath()
-										+ "/news"
-										+ "';"
-										+ "</script>");
-					return;
-				}
-				nextPage="/sign_in/sign_in.jsp";
-			}
-			
-			
-			else if(action.equals("/login.do")) {		//로그인 데이터 받기
-				String id=request.getParameter("id");
-				String pwd=request.getParameter("pwd");
-				
+				memberDAO.withdraw(id);
 				memberVO.setId(id);
-				memberVO.setPwd(pwd);
-				boolean loginValue=memberDAO.login(memberVO);
-				System.out.println("로그인 값: " + loginValue);
-				if(loginValue) {			//로그인 성공시
-					request.setAttribute("memberVO", memberVO);
-					
-					loginCookie = new Cookie("loginId", memberVO.getId());
-					loginCookie.setPath("/");
-					loginCookie.setMaxAge(60 * 60 * 24);
-					response.addCookie(loginCookie);
-					
-					session=request.getSession();
-					session.setAttribute("loginIdSess", memberVO.getId());
-					nextPage="/interchange/tonews.jsp";
-				}
-				
-				else {						//로그인 실패시
-					memberVO.setId(null);
-					memberVO.setName(null);
-					memberVO.setPwd(null);
-					memberVO.setPnum(null);
-					memberVO.setEmail(null);
-					PrintWriter pw = response.getWriter();
-					pw.print("<script>" + "alert('로그인에 실패하였습니다');"
-										+ " location.href='"
-										+ request.getContextPath()
-										+ "/member/loginForm.do"
-										+ "';"
-										+ "</script>");
-					return;
-				}
-			}
-			
-			
-			else if(action.equals("/mypage.do")) {			//마이페이지
-				manageCookieId(cookies, memberVO);
-				if(memberVO.getId() == null) {
-					PrintWriter pw = response.getWriter();
-					pw.print("<script>" + " alert('로그인 화면으로 이동합니다');"
-										+ " location.href='"
-										+ request.getContextPath()
-										+ "/member/loginForm.do"
-										+ "';"
-										+ "</script>");
-					return;
-				}
-				memberDAO.getMemberInfo(memberVO);
-				request.setAttribute("memberVO", memberVO);
-				nextPage="/myPage/myPage.jsp";
-			}else if(action.equals("/logout.do")) {		//로그아웃
-				memberVO.setId(null);
-				memberVO.setName(null);
-				memberVO.setPwd(null);
-				memberVO.setPnum(null);
-				memberVO.setEmail(null);
-				loginCookie = null;
-				deleteCookie(cookies, response);
-				
-				System.out.println("logOut confirm - id value: " + memberVO.getId());
-				
+				session=request.getSession();
 				session.removeAttribute("loginIdSess");
+				deleteCookie(cookies, response);
 				PrintWriter pw = response.getWriter();
-				pw.print("<script>" + " alert('로그아웃 되었습니다.');"
+				pw.write("<script>" + "alert('회원탈퇴가 완료되었습니다.');"
 									+ " location.href='"
 									+ request.getContextPath()
-									+ "/news"
+									+ "/member/loginForm.do"
 									+ "';"
 									+ "</script>");
 				return;

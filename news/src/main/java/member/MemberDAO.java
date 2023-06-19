@@ -88,8 +88,6 @@ public class MemberDAO {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
-		} finally {
-			
 		}
 		return true;
 	}
@@ -218,24 +216,4 @@ public class MemberDAO {
 			id=null;
 		}
 	}
-
-	
-	
-//	public void dataWashing() {
-//		try {
-//			conn=dataFactory.getConnection();
-//			String query = "SELECT * FROM emptytable";
-//			pstmt=conn.prepareStatement(query);
-//			ResultSet rs=pstmt.executeQuery();
-//			while(rs.next()) {
-//				String i=rs.getString("i");
-//			}
-//			rs.close();
-//			pstmt.close();
-//			conn.close();
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//	}
-
 }
