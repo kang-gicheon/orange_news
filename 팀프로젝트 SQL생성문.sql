@@ -16,7 +16,7 @@ CREATE TABLE member ( --회원 정보 테이블
     name varchar2(50),  -- 이름
     rep int default 0,  -- 0이 일반 계정
     pnum varchar2(50),-- 휴대폰 번호
-    address varchar2(50), -- 주소 
+    email varchar2(50), -- 주소 
     
     PRIMARY KEY (id)
 );
@@ -72,14 +72,14 @@ CREATE TABLE REACT (
 
 -- 임시 데이터 삽입
 
-INSERT INTO MEMBER (id, pwd, name, rep, pnum, address) 
-values ('testID', 'testpwd', 'testname', 0, '01012345678', 'testaddress');
+INSERT INTO MEMBER (id, pwd, name, rep, pnum, email) 
+values ('testID', 'testpwd', 'testname', 0, '01012345678', 'test01@address.com');
 
-INSERT INTO MEMBER (id, pwd, name, rep, pnum, address) 
-values ('testID2', 'testpwd2', 'testname2', 0, '01059859845', 'testaddress2');
+INSERT INTO MEMBER (id, pwd, name, rep, pnum, email) 
+values ('testID2', 'testpwd2', 'testname2', 0, '01059859845', 'test02@address.com');
 
-INSERT INTO MEMBER (id, pwd, name, rep, pnum, address) 
-values ('reporter1', 'repopwd', '기자1', 1, '01078784545', 'testaddress3');
+INSERT INTO MEMBER (id, pwd, name, rep, pnum, email) 
+values ('reporter1', 'repopwd', '기자1', 1, '01078784545', 'test03@address.com');
 
 INSERT INTO ARTICLE (title, writedate, updatedate, content, articlenum, type, reccount, hotissue, img, id)
 values('testTITLE2', sysdate, sysdate, 'testContent22', seq_anum.nextval, 4, 2, 0, 'sea3.png', 'reporter1');
