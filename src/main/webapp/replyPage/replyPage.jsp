@@ -58,6 +58,13 @@ hr {
 	margin: 2px auto 2px;
 }
 
+hr.type1 {
+	width: 100%;
+	margin: 2px auto 2px;
+	background-color: #fff;
+	margin: 2px auto 2px;
+}
+
 .re-write-space {
 	width: 95%;
 	margin: 5px auto 9px;
@@ -107,9 +114,9 @@ hr {
 	$(document).ready(function() {
 		
 		//댓글 초기화
-		resetList(0);
-		
-	});
+			resetList(0);
+
+	}); 
 	
 	function resetList(type) {
 		
@@ -130,7 +137,7 @@ hr {
 				
 				success : function(result) { // 결과 성공 콜백함수
 					$(".reply-list").empty();
-					for(let i = 0; i < Object.keys(result).length ; i++ ){
+					for(l et i = 0; i < Object.keys(result).length ; i++ ){
 						
 						makeReply(result[i].userID,
 								result[i].date,
@@ -198,6 +205,7 @@ hr {
 						<a href="#" onclick="showType1(`+renum+`)" class="card-link">답글</a>
 						<a href="#"	onclick="getGood(`+renum+`)" class="card-link">추천 : ` + good + `</a>
 						<a href="#" onclick="getBad(`+renum+`)"	class="card-link">비추천 : ` + bad + `</a>
+						<a href="#" onclick="deleteType0(`+renum+`)"	class="card-link">삭제</a>
 						
 						<div class="type1-reply">
 						<p></p>
@@ -212,9 +220,10 @@ hr {
 									class="btn btn-warning active btn-sm" id="type1writebutton"
 									onclick="writeReplyType1(` + renum + `)">등록</button>
 							</div>
-							<br />
+							<p style="margin-bottom: 50px"></p>
+							<hr>
 							<div class="type1-reply-list">
-								메이크 리플라이1
+								답글이 없습니다.
 							</div>
 						</div>
 					</div>
@@ -223,17 +232,7 @@ hr {
 		
 	}
 	
-	function makeReply1 () {
-		$(".type1-reply-list").append(`
-				<div>
-					<div class="card-body sm">
-						<h6 class="card-title">`+ id + `</h6>
-						<h7 class="card-subtitle mb-2 text-muted">`+ date +`</h7>
-						<p class="card-text">`+ comment +`</p>
-					<div>
-				</div>
-		`);
-	}
+	
 		
 	function writeReply() {
 		
@@ -333,7 +332,7 @@ hr {
 					alert("해당 댓글을 비추천하셨습니다.");
 					//새로고침
 					location.reload();
-					
+						
 				} else {
 					alert("다시 시도해 주십시오");
 				}
@@ -347,19 +346,143 @@ hr {
 			
 	}
 	
-	function showType1(renum) {
+	function deleteType0(renum) {
 		
-		let id = "reply"+renum;
-		
-		$('#'+id+' > div > .type1-reply').toggle();
-		
-		
+		$.ajax({
+			type : 'post',	
+			
+			// 경로를 바꿔야 한다면 이 변수를 바꾸기
+			url : '/trc/deletetype0.do',			
+			//
+			
+			//articleNum을 viewPage에서 받을수 있도록 한다.
+			//일단 임시로 1을 전달
+			dataType : 'text',   
+			data : {"replyNum" : renum},
+			
+			success : function(result) { // 결과 성공 콜백함수
+				
+				console.log(result);
+				if(result == "success"){
+					alert("해당 댓글을 삭제하였습니다.");
+					//새로고침
+					location.reload();
+						
+				} else {
+					alert("다시 시도해 주십시오");
+				}
+				
+			},
+			
+			error : function(request, status, error) { // 결과 에러 콜백함수
+				console.log(error)
+			}
+		});
 		
 	}
 	
-	function writeReplyType1(renum) {
+	function deleteType1(renum, parentnum) {
 		
-		let id = "reply"+renum;
+		$.ajax({
+			type : 'post',	
+			
+			// 경로를 바꿔야 한다면 이 변수를 바꾸기
+			url : '/trc/deletetype1.do',			
+			//
+			
+			//articleNum을 viewPage에서 받을수 있도록 한다.
+			//일단 임시로 1을 전달
+			dataType : 'text',   
+			data : {"replyNum" : renum, "parentNum" : parentnum},
+			
+			success : function(result) { // 결과 성공 콜백함수
+				
+				console.log(result);
+				if(result == "success"){
+					
+					alert("해당 댓글을 삭제하였습니다.");
+					showType1(parentnum);
+						
+				} else {
+					alert("다시 시도해 주십시오");
+				}
+				
+			},
+			
+			error : function(request, status, error) { // 결과 에러 콜백함수
+				console.log(error)
+			}
+		});
+		
+	}
+	
+	function makeReply1(id, date, comment, replyNum, parentNum) {
+		let replyId = "reply" + replyNum;
+		let parentId = "reply"+ parentNum;
+		console.log("makeR1 : "+replyId);	
+		$('#'+ parentId +' > div > div > .type1-reply-list').append(`
+				<div id="`+ replyId +`">
+					<div class="card-body sm">
+						<h6 class="card-title">`+ id + `&nbsp&nbsp<a href="#" onclick="deleteType1(`+replyNum+`,`+parentNum+`)" class="card-link" style="font-size:8px">삭제</a></h6>  
+						<h7 class="card-subtitle mb-2 text-muted">`+ date +`</h7>
+						<p class="card-text">`+ comment +`</p>
+					<div>
+					<hr  class="type1">
+				</div>
+		`);
+	}
+
+	function showType1(parentnum) {
+		
+		let id = "reply"+parentnum;
+		
+		console.log(id);
+		
+		$('#'+id+' > div > .type1-reply').show();
+		
+		$.ajax({
+			type : 'post',	
+			
+			// 경로를 바꿔야 한다면 이 변수를 바꾸기
+			url : '/trc/type1list.do',			
+			//
+			
+			//articleNum을 viewPage에서 받을수 있도록 한다.
+			//일단 임시로 1을 전달
+			dataType : 'json',   
+			data : {"articleNum": "1", "parentNum" : parentnum},
+			
+			success : function(result) { // 결과 성공 콜백함수
+				
+				console.log("111");
+				console.log(result);
+			
+				$('#'+id+' > div > div > div.type1-reply-list').empty();
+				
+				console.log(Object.keys(result).length);
+				
+				for(let i = 0; i < Object.keys(result).length ; i++ ){
+					
+					makeReply1(result[i].userID,
+							result[i].date,
+							result[i].contents,
+							result[i].replyNum,
+							result[i].parentNum);
+					
+				}
+				
+			},
+			
+			error : function(request, status, error) { // 결과 에러 콜백함수
+				console.log(error);
+			}
+		});	
+		
+	}
+	
+	function writeReplyType1(parentNum) {
+		
+		let id = "reply"+parentNum;
 		
 		let comment = $('#'+id+' > div > div > div > div > .type1-text-space').val();
 		
@@ -373,23 +496,26 @@ hr {
 			//articleNum을 viewPage에서 받을수 있도록 한다.
 			//일단 임시로 1을 전달 id 는 임시로 kang
 			dataType : 'text',   
-			data : {"articleNum": "1", "replyNum" : renum, "id" : 'kang', "comment" : comment},
+			data : {"articleNum": "1", "replyNum" : parentNum, "id" : 'kang', "comment" : comment},
 			
 			success : function(result) { // 결과 성공 콜백함수
-				console.log(result);
 				if(result == "success"){
+					
 					alert("답변을 등록 하셨습니다.");
-					//새로고침
-					location.reload();
+					
+					showType1(parentNum);
 					
 				} else {
 					alert("다시 시도해 주십시오");
 				}
+				
+				
 			},
 			
 			error : function(request, status, error) { // 결과 에러 콜백함수
 				console.log(error)
 			}
+			
 		});
 		
 	}
