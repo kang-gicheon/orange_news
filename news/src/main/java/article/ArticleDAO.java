@@ -35,8 +35,10 @@ public class ArticleDAO {
 		}
 	}
 	
+	
+	//자바는 자동 커밋으로 알고 있는데 꼭 필요한 메서드인지 확인 요망
+	// -> 필요하더라도 재사용되는 데가 하나 밖에 없는 데 꼭 메서드로 만들 필요가 있는지 논의 필요
 	public void commitString() {
-		
 		try {
 			conn = dataFactory.getConnection();
 			String query = "commit";
@@ -265,7 +267,7 @@ public class ArticleDAO {
 		return article;
 	}
 	
-	//이거 어차피 insertNewArticle() 메서드에서 실행되는 쿼리문인데 필요한 메서드인지 확인필요
+	//이거 어차피 insertNewArticle() 메서드에서 실행되는 쿼리문과 동일한데 필요한 메서드인지 확인 요망
 	public void firstAddReact(ArticleVO article) {
 		
 		try {
