@@ -21,6 +21,15 @@ request.setCharacterEncoding("UTF-8");
 	<a href="${contextPath }/member/loginForm.do">
 		<p>로그인</p>
 	</a>
+	<a href="${contextPath }/member/logout.do">
+		<p>로그아웃</p>
+	</a>
+	<a href="${contextPath }/member/mypage.do">
+		<p>마이페이지</p>
+	</a>
+	<a href="${contextPath }/twc">
+		<p>(날씨)</p>
+	</a>
 
 	<table align="center" border="2" width="80%">
 
