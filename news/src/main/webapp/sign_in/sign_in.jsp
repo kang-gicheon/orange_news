@@ -147,7 +147,7 @@ form {
 
 <div class="form-wrapper">
 <div class = "form-wrapper-text">
-<p><a href='#'>X</a></p>
+<p><a href="${contextPath }/news">X</a></p>
 </div>
 
   <h1>로그인</h1>

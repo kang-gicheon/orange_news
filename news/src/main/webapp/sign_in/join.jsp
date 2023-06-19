@@ -144,7 +144,7 @@ form {
 
 <div class="form-wrapper">
 <div class = "form-wrapper-text">
-<p><a href=#>X</a></p>
+<p><a href="${contextPath }/news">X</a></p>
 </div>
   <h1>회원가입창</h1>
   <form name="abc" method="post" action="${contextPath }/member/joining.do " > <!-- 백 작업 진행 중 -->

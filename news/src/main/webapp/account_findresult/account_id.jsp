@@ -146,7 +146,7 @@ h3 {
 </style>
 <script>
 	function backTologin(obj){
-		obj.action="${contextPath }/member/login.do";
+		obj.action="${contextPath }/member/loginForm.do";
 		obj.submit();
 	}
 </script>
@@ -159,7 +159,7 @@ h3 {
 <div class="form-wrapper">
 	<div class = "form-wrapper-text">
 	
-		<p><a href='#'>X</a></p>
+		<p><a href="${contextPath }/news">X</a></p>
 	
 	</div>
   <h1>아이디 탐색결과</h1>

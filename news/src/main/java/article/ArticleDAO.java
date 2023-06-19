@@ -265,6 +265,7 @@ public class ArticleDAO {
 		return article;
 	}
 	
+	//이거 어차피 insertNewArticle() 메서드에서 실행되는 쿼리문인데 필요한 메서드인지 확인필요
 	public void firstAddReact(ArticleVO article) {
 		
 		try {

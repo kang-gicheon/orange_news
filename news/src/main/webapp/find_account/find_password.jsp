@@ -145,7 +145,7 @@ form {
 <div class="form-wrapper">
 <div class="form-wrapper-text">
 	
-		<p><a href = "#">X</a></p>
+		<p><a href = "${contextPath }/news">X</a></p>
 	
 	</div>
 
@@ -164,7 +164,7 @@ form {
     </div>
   </form>
   <div class="form-footer">
-    <p><a href="${contextPath }/member/login.do">로그인하기</a></p>
+    <p><a href="${contextPath }/member/loginForm.do">로그인하기</a></p>
     <p><a href="${contextPath }/member/findid.do">아이디를 잊으셨나요?</a></p>
   </div>
 </div>

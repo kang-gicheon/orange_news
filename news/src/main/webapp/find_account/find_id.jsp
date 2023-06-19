@@ -143,7 +143,7 @@ form {
 
 <div class="form-wrapper">
 <div class = "form-wrapper-text">
-<p><a href='#'>X</a></p>
+<p><a href="${contextPath }/news">X</a></p>
 </div>
   <h1>아이디 찾기</h1>
   <form name="abc" method="post" action="${contextPath }/member/resultid.do">
@@ -160,7 +160,7 @@ form {
     </div>
   </form>
   <div class="form-footer">
-    <p><a href="${contextPath }/member/login.do">로그인하기</a></p>
+    <p><a href="${contextPath }/member/loginForm.do">로그인하기</a></p>
     <p><a href="${contextPath }/member/findpwd.do">비밀번호를 잊으셨나요?</a></p>
   </div>
 </div>

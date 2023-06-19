@@ -119,7 +119,7 @@ h3 {
 </style>
 <script>
 	function backTologin(obj){
-		obj.action="${contextPath }/member/login.do";
+		obj.action="${contextPath }/member/loginForm.do";
 		obj.submit();
 	}
 </script>
