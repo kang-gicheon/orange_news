@@ -178,7 +178,7 @@ form {
     </div>
   </form>
   <div class="form-footer">
-    <p><a href="${contextPath }/member/login.do">계정이 있으신가요?</a></p>	<!-- 계정이 있다면 로그인 화면으로 이동 -->
+    <p><a href="${contextPath }/member/loginForm.do">계정이 있으신가요?</a></p>	<!-- 계정이 있다면 로그인 화면으로 이동 -->
   </div>
 </div>
 

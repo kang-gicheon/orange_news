@@ -114,7 +114,7 @@ request.setCharacterEncoding("UTF-8");
 
 				</tr>
 				<tr>
-					<td><a>좋아요 : ${article.rcount} </a></td>
+					<td colspan="5">현재 ${article.actype }의 개수 : ${article.rcount} </td>
 				</tr>
 
 				<tr>

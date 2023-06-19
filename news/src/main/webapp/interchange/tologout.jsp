@@ -7,7 +7,7 @@
 %>
 <c:set var="contextPath" value="${pageContext.request.contextPath }" />
 <%
-	response.sendRedirect("/news");
+	response.sendRedirect("/news/logout.do");
 %>
 <!DOCTYPE html>
 <html>

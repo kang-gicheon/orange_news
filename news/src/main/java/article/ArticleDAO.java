@@ -22,6 +22,7 @@ public class ArticleDAO {
 	private Connection conn;
 	private Connection conn2;
 	private DataSource dataFactory;
+	
 	private int rcount =0;
 	
 	public ArticleDAO() {
@@ -30,6 +31,22 @@ public class ArticleDAO {
 			Context envCtx = (Context) ctx.lookup("java:/comp/env");
 			dataFactory = (DataSource) envCtx.lookup("jdbc/oracle");
 		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void commitString() {
+		
+		try {
+			conn = dataFactory.getConnection();
+			String query = "commit";
+			pstmt = conn.prepareStatement(query);
+			pstmt.executeUpdate();
+			System.out.println("커밋 함");
+			
+			pstmt.close();
+			conn.close();
+		}catch(Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -97,10 +114,10 @@ public class ArticleDAO {
 			int type = article.getType();
 			int hotissue = article.getHotissue();
 			String img = article.getImgFileName();
-			String id = article.getId();
+		//	String id = article.getId();
 			
 			String query = "INSERT INTO ARTICLE (title, writedate, updatedate, content, articlenum, type, reccount, hotissue, img, id)"
-					+ " values(?, sysdate, sysdate, ?, seq_anum.nextval, ?, 0, ?, ?, ?)";
+					+ " values(?, sysdate, sysdate, ?, seq_anum.nextval, ?, 0, ?, ?, 'reporter1')";
 			
 		//	String query2 = "SELECT articlenum FROM ARTICLE WHERE title =?";
 			
@@ -110,8 +127,7 @@ public class ArticleDAO {
 			pstmt.setString(2, content);
 			pstmt.setInt(3, type);
 			pstmt.setInt(4, hotissue);
-			pstmt.setString(5, img);
-			pstmt.setString(6, id);
+			pstmt.setString(5,img);
 			pstmt.executeUpdate();
 			pstmt.close();
 		
@@ -300,7 +316,6 @@ public class ArticleDAO {
 		String r_type = article.getActype();
 		int articlenum =article.getArticlenum();
 		
-		System.out.println(r_type + articlenum + "으아악");
 //		int rcount = 0;
 //		try {
 //		String query = "SELECT rcount FROM REACT where R_TYPE = ?";
@@ -313,13 +328,14 @@ public class ArticleDAO {
 //		
 		try {
 			conn = dataFactory.getConnection();
-			String query = "SELECT rcount FROM REACT WHERE articlenum = ?";
+			String query = "SELECT rcount FROM REACT WHERE r_type=? and articlenum = ?";
 			pstmt = conn.prepareStatement(query);
-			pstmt.setInt(1, articlenum);
+			pstmt.setString(1, r_type);
+			pstmt.setInt(2, articlenum);
 			ResultSet rs = pstmt.executeQuery();
 			while(rs.next()) {
 				rcount = rs.getInt("rcount"); //rcount 받아옴
-				System.out.println(rcount);
+				System.out.println(r_type+"의 현재 개수 : "+rcount);
 			}
 			
 			rcount=rcount+1;
@@ -335,6 +351,8 @@ public class ArticleDAO {
 			article.setActype(r_type);
 			article.setRcount(rcount);
 			article.setArticlenum(articlenum);
+			
+			commitString();
 		
 			pstmt2.close();
 			conn2.close();

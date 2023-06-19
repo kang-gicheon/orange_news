@@ -61,21 +61,6 @@ public class NewsController extends HttpServlet {
 		
 		//쿠키
 		Cookie[] cookies = request.getCookies();
-		Cookie loginCookie;
-		
-		//쿠키 로그인 값 지우기
-//		deleteCookie(cookies, response);
-		
-		//로그인 값을 가진 쿠키 전송 
-		HttpSession session = request.getSession();
-		String cookieValue = (String) session.getAttribute("loginIdSess");
-		System.out.println("cookieValue: "+ cookieValue);
-		if(cookieValue!=null) {
-			loginCookie=new Cookie("loginId", cookieValue);
-			loginCookie.setMaxAge(60*60*24);
-			response.addCookie(loginCookie);
-		}
-		session.setAttribute("loginIdSess", cookieValue);
 		
 		System.out.println("action: " + action); // 어떤 액션인지 콘솔에서 확인용 (나중에 지워짐)
 
@@ -87,14 +72,16 @@ public class NewsController extends HttpServlet {
 				request.setAttribute("articlesList", articlesList);
 				nextPage = "/test/mainPage.jsp";
 
-			} else if (action.equals("/member.do")) { // 회원가입
-				System.out.println("회원가입");
 			}
+			
+//			else if (action.equals("/member.do")) { // 회원가입
+//				System.out.println("회원가입");
+//			}
 
-			else if (action.equals("/login.do")) { // 로그인
-				System.out.println("로그인");
-				nextPage = "/sign_in/login.jsp";
-			}
+//			else if (action.equals("/login.do")) { // 로그인
+//				System.out.println("로그인");
+//				nextPage = "/sign_in/login.jsp";
+//			}
 
 			else if (action.equals("/articleForm.do")) { // 기사 클릭 (기사 조회)
 				System.out.println("기사");
@@ -191,19 +178,6 @@ public class NewsController extends HttpServlet {
 
 				return;
 			}
-			
-			else if (action.equals("/logout.do")) {
-				loginCookie=null;
-				deleteCookie(cookies, response);
-				session.removeAttribute("loginIdSess");
-				PrintWriter pw = response.getWriter();
-				pw.print("<script>" + " location.href='"
-									+ request.getContextPath()
-									+ "/news"
-									+ "'"
-									+ "</script>");
-				return;
-			}
 
 			else {
 				System.out.println("그 외");
@@ -279,7 +253,7 @@ public class NewsController extends HttpServlet {
 	private void deleteCookie(Cookie cookies[], HttpServletResponse response) throws ServletException, IOException {
 		if(cookies != null) {
 			for(Cookie cookie : cookies) {
-				
+					cookie.setPath("/");
 					cookie.setMaxAge(0);
 					response.addCookie(cookie);
 					

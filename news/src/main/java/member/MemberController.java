@@ -17,7 +17,7 @@ import javax.servlet.http.HttpSession;
  * Servlet implementation class MemberControlloer
  */
 @WebServlet("/member/*")
-public class MemberControlloer extends HttpServlet {
+public class MemberController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	MemberDAO memberDAO;
 	MemberService memberService;
@@ -48,20 +48,11 @@ public class MemberControlloer extends HttpServlet {
 		System.out.println("action: " + action);
 		
 		
-		
-		//쿠키 로그인 값 초기화
-//		deleteCookie(cookies, response);
+
 		
 		//로그인 값을 가진 쿠키 전송 
 		HttpSession session = request.getSession();
-//		String cookieValue = (String) session.getAttribute("loginIdSess");
-//		System.out.println("cookieValue: "+ cookieValue);
-//		if(cookieValue!=null) {
-//			loginCookie=new Cookie("loginId", cookieValue);
-//			loginCookie.setMaxAge(60*60*24);
-//			response.addCookie(loginCookie);
-//		}
-//		session.setAttribute("loginIdSess", cookieValue);
+
 		
 		
 		
@@ -351,6 +342,7 @@ public class MemberControlloer extends HttpServlet {
 					request.setAttribute("memberVO", memberVO);
 					
 					loginCookie = new Cookie("loginId", memberVO.getId());
+					loginCookie.setPath("/");
 					loginCookie.setMaxAge(60 * 60 * 24);
 					response.addCookie(loginCookie);
 					
@@ -399,23 +391,19 @@ public class MemberControlloer extends HttpServlet {
 				memberVO.setPnum(null);
 				memberVO.setEmail(null);
 				loginCookie = null;
-				session=request.getSession();
-				session.removeAttribute("loginIdSess");
 				deleteCookie(cookies, response);
 				
 				System.out.println("logOut confirm - id value: " + memberVO.getId());
 				
+				session.removeAttribute("loginIdSess");
 				PrintWriter pw = response.getWriter();
 				pw.print("<script>" + " alert('로그아웃 되었습니다.');"
 									+ " location.href='"
 									+ request.getContextPath()
-									+ "/news/logout.do"
+									+ "/news"
 									+ "';"
 									+ "</script>");
 				return;
-
-
-//				nextPage="/interchange/tonews.jsp";
 			}
 			
 			RequestDispatcher dispatch = request.getRequestDispatcher(nextPage);
@@ -443,7 +431,8 @@ public class MemberControlloer extends HttpServlet {
 		if(cookies != null) {
 			for(Cookie cookie : cookies) {
 				
-				
+				System.out.println("삭제할 쿠키: "+cookie.getName());
+					cookie.setPath("/");
 					cookie.setMaxAge(0);
 					response.addCookie(cookie);
 					
