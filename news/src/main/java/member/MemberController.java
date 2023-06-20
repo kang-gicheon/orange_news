@@ -37,25 +37,21 @@ public class MemberController extends HttpServlet {
 	}
 	
 	private void doHandle(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String nextPage = "";
+		MemberVO memberVO = new MemberVO();
+
+		//쿠키
 		Cookie[] cookies = request.getCookies(); // 클라이언트로부터 전송된 모든 쿠키 가져오기
 		Cookie loginCookie = null;
 		
-		MemberVO memberVO = new MemberVO();
+		//로그인 값을 가진 쿠키 전송 
+		HttpSession session = request.getSession();
+		
+		String nextPage = "";
+		
 		request.setCharacterEncoding("utf-8");
 		response.setContentType("text/html; charset=utf-8");
 		String action = request.getPathInfo();
 		System.out.println("action: " + action);
-		
-		
-
-		
-		//로그인 값을 가진 쿠키 전송 
-		HttpSession session = request.getSession();
-
-		
-		
-		
 		
 		try {
 			if(action==null) {			//개인 계정 페이지

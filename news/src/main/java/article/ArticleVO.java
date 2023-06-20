@@ -2,7 +2,6 @@ package article;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.sql.Date;
 
 public class ArticleVO {

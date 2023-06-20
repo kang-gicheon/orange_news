@@ -14,7 +14,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.json.JSONObject;
 
@@ -40,7 +39,6 @@ public class TestWeatherController extends HttpServlet {
 		String nextPage = "";
 		request.setCharacterEncoding("utf-8");
 		response.setContentType("text/html; charset=utf-8");
-		HttpSession session;
 		
 		String action = request.getPathInfo();
 		System.out.println("action: " + action);

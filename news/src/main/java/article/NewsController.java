@@ -16,7 +16,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
@@ -55,15 +54,12 @@ public class NewsController extends HttpServlet {
 		
 		
 		String nextPage = "";
-		String loginId = memberVO.getId();
-		int report = memberVO.getReporter();
 		request.setCharacterEncoding("utf-8");
 		response.setContentType("text/html;charset=utf-8");
 		String action = request.getPathInfo();
 		
 		//쿠키
 		Cookie[] cookies = request.getCookies();
-		HttpSession session;
 		Cookie articlenumCookie;
 		
 		//쿠키(path:/news)값 삭제 -> 메인페이지로 이동시 기사 쿠키 삭제
