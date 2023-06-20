@@ -1,4 +1,4 @@
-package reply;
+package weather;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -11,7 +11,7 @@ public class replyVO {
 	private String userID;
 	private String contents;
 	private int replyNum;
-	private int retype; //상위인지 하위인지
+	private int parentNum; 
 	private int good;
 	private int bad;
 	private String date;
