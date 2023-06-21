@@ -110,7 +110,7 @@ request.setCharacterEncoding("UTF-8");
 					<td><input type="radio" name="react" value="훈훈해요"></input></td>
 					<td><input type="radio" name="react" value="슬퍼요"></input></td>
 					<td><input type="radio" name="react" value="화나요"></input></td>
-					<td><input type="radio" name="react" value="후속기사원해요"></input></td>
+					<td><input type="radio" name="react" value="후속기사 원해요"></input></td>
 
 				</tr>
 				<tr>
@@ -122,7 +122,21 @@ request.setCharacterEncoding("UTF-8");
 					<td colspan=5 align=center><input type=submit value="반응남기기" />
 					</td>
 
-					<td colspan=5 align=center><input type=reset value="Reset"></td>
+				</tr>
+				</table>
+				</form>
+				
+				<form method="post"  action="${contextPath}/news/updateRec.do" name ="recform">
+				
+				<table>
+				
+				<tr>
+					<td colspan ="5">현재 추천 개수 : ${article.recCount }</td>
+					</tr>
+					<tr>
+					<td colspan="5">이 기사 추천하기 </td>
+					<td colspan=5 align=center><input type=submit name="react" value="O"/>
+					</td>
 				</tr>
 				
 				<tr>
@@ -132,6 +146,6 @@ request.setCharacterEncoding("UTF-8");
 			</table>
 		</form>
 		
-	
+
 </body>
 </html>

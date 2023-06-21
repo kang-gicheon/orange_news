@@ -18,8 +18,17 @@ request.setCharacterEncoding("UTF-8");
 	<a href="${contextPath }/news/addarticleForm.do">
 		<p>기사 작성</p>
 	</a>
-	<a href="${contextPath }/news/login.do">
+	<a href="${contextPath }/member/loginForm.do">
 		<p>로그인</p>
+	</a>
+	<a href="${contextPath }/member/logout.do">
+		<p>로그아웃</p>
+	</a>
+	<a href="${contextPath }/member/mypage.do">
+		<p>마이페이지</p>
+	</a>
+	<a href="${contextPath }/twc">
+		<p>(날씨)</p>
 	</a>
 
 	<table align="center" border="2" width="80%">
@@ -39,7 +48,10 @@ request.setCharacterEncoding("UTF-8");
 				<c:forEach var="article" items="${articlesList}"
 					varStatus="articleNum">
 					<tr align="center">
-						<td width="5%">${articleNum.count }</td>
+					<c:if test="${article.hotissue==1 }">
+						<td width="5%">특종</td></c:if>
+					<c:if test="${article.hotissue==0 }">	
+					<td width="5%">일반기사</td></c:if>
 						<td width="30%"><a href="${contextPath}/news/viewArticle.do?articlenum=${article.articlenum}">
 						<img src="${contextPath }/download.do?&title=${article.title}&imgFileName=${article.imgFileName}"
 							id="preview"  style ="width:200px; height:150px;" /></a><br>
