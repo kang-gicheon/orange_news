@@ -11,7 +11,7 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
-public class ArticleDAO {
+public class ArticleDAO_new {
 	private PreparedStatement pstmt;
 	private PreparedStatement pstmt1;
 	private PreparedStatement pstmt2;
@@ -23,7 +23,7 @@ public class ArticleDAO {
 	private Connection conn2;
 	private DataSource dataFactory;
 	
-	public ArticleDAO() {
+	public ArticleDAO_new() {
 		try {
 			Context ctx = new InitialContext();
 			Context envCtx = (Context) ctx.lookup("java:/comp/env");
@@ -33,21 +33,15 @@ public class ArticleDAO {
 		}
 	}
 	
-	public List<ArticleVO> selectAllArticles(int a){
+	public List<ArticleVO> selectAllArticles(){
 		System.out.println("selectAllArticles 들어옴");
 		List<ArticleVO> articlesList = new ArrayList<ArticleVO>();
 		
 		try {
 			conn=dataFactory.getConnection();
 			String query = "SELECT title, content, articlenum,type, reccount, hotissue,img, id "+
-			" FROM ARTICLE ORDER by ";
-			if(a==0) {
-				query +="articlenum";
-			}else if(a==1) {
-				query += "reccount";
-			}
-			query += " DESC";
-			System.out.println(query);
+			" FROM ARTICLE ORDER by ARTICLENUM DESC";
+			
 			pstmt = conn.prepareStatement(query);
 			ResultSet rs = pstmt.executeQuery();
 			
@@ -79,45 +73,6 @@ public class ArticleDAO {
 			e.printStackTrace();
 		}
 		return articlesList;
-	}
-	
-	public List<ArticleVO> selectArticlesofType(ArticleVO article){
-		List<ArticleVO> articlesofTypeList = new ArrayList<ArticleVO>();
-		try {
-			conn=dataFactory.getConnection();
-			int type = article.getType();
-			String query="SELECT title, content, articlenum,type, reccount, hotissue,img, id"
-					+ " FROM article WHERE type=? ORDER by articlenum DESC";
-			pstmt=conn.prepareStatement(query);
-			pstmt.setInt(1, type);
-			ResultSet rs = pstmt.executeQuery();
-			while(rs.next()) {
-				String title = rs.getString("title");
-				String content = rs.getString("content");
-				int articleNum = rs.getInt("articlenum");
-				type = rs.getInt("type");
-				int reccount = rs.getInt("reccount");
-				int hotissue = rs.getInt("hotissue");
-				String imageFileName = rs.getString("img");
-				String id = rs.getString("id");
-				
-				article.setTitle(title);
-				article.setContent(content);
-				article.setArticlenum(articleNum);
-				article.setType(type);
-				article.setRecCount(reccount);
-				article.setHotissue(hotissue);
-				article.setImgFileName(imageFileName);
-				article.setId(id);
-				articlesofTypeList.add(article);	
-			}
-			rs.close();
-			pstmt.close();
-			conn.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return articlesofTypeList;
 	}
 	
 	public void insertNewArticle(ArticleVO article) {
@@ -158,7 +113,6 @@ public class ArticleDAO {
 			ps.close();
 			
 			conn2 = dataFactory.getConnection();
-			System.out.println(articlenum +" <= articlenum");
 			
 			String query2 = "INSERT INTO REACT (r_type, rcount, articlenum) values(?,0,?) ";
 			pstmt1 = conn2.prepareStatement(query2);
@@ -197,22 +151,13 @@ public class ArticleDAO {
 		
 	}
 	
-	public ArticleVO selectArticle(ArticleVO article, int a) {
-		//a==0 기사 선택 / a==1 헤드라인 기사 전시
-		
+	public ArticleVO selectArticle(ArticleVO article) {
 		try {
 			conn=dataFactory.getConnection();
-			String query ="SELECT * FROM (SELECT title, writedate, content, articlenum, type, reccount, hotissue, img, id from ARTICLE";	
-			if(a==0) {
-				query += " WHERE articlenum=?)";
-			} else if(a==1) {
-				query += " ORDER BY articlenum DESC) WHERE ROWNUM = 1";
-			}
+			String query ="SELECT title, writedate, content, articlenum, type, reccount, hotissue, img, id"
+					+" from ARTICLE where articlenum=?";
 			pstmt=conn.prepareStatement(query);
-			System.out.println(query);
-			if(a==0) {
-				pstmt.setInt(1, article.getArticlenum());
-			}
+			pstmt.setInt(1, article.getArticlenum());
 			ResultSet rs = pstmt.executeQuery();
 			rs.next();
 			String title = rs.getString("title");
@@ -240,41 +185,6 @@ public class ArticleDAO {
 		}
 		return article;
 	}
-	
-//	public ArticleVO selectArticle(ArticleVO article) {
-//		try {
-//			conn=dataFactory.getConnection();
-//			String query ="SELECT title, writedate, content, articlenum, type, reccount, hotissue, img, id"
-//					+" from ARTICLE where articlenum=?";
-//			pstmt=conn.prepareStatement(query);
-//			pstmt.setInt(1, article.getArticlenum());
-//			ResultSet rs = pstmt.executeQuery();
-//			rs.next();
-//			String title = rs.getString("title");
-//			Date writedate = rs.getDate("writedate");
-//			String content = rs.getString("content");
-//			int type = rs.getInt("type");
-//			int reccount = rs.getInt("reccount");
-//			int hotissue = rs.getInt("hotissue");
-//			String imageFileName = rs.getString("img");
-//			String id = rs.getString("id");
-//			
-//			article.setTitle(title);
-//			article.setContent(content);
-//			article.setType(type);
-//			article.setRecCount(reccount);
-//			article.setHotissue(hotissue);
-//			article.setImgFileName(imageFileName);
-//			article.setId(id);
-//			article.setWritedate(writedate);
-//			rs.close();
-//			pstmt.close();
-//			conn.close();
-//		}catch(Exception e) {
-//			e.printStackTrace();
-//		}
-//		return article;
-//	}
 	
 	public ArticleVO viewReact(ArticleVO article) {
 		try {
@@ -316,7 +226,6 @@ public class ArticleDAO {
 			ResultSet rs = pstmt.executeQuery();
 			while(rs.next()) {
 				rcount = rs.getInt("rcount"); //rcount 받아옴
-				System.out.println(r_type+"의 현재 개수 : "+rcount);
 			}
 			
 			rcount=rcount+1;
@@ -343,112 +252,4 @@ public class ArticleDAO {
 		}
 		return article;
 	}
-	
-	public ArticleVO updateReccount(ArticleVO article) {
-		System.out.println("updateReccount 메소드 들어옴");
-		int articlenum = article.getArticlenum();
-		
-		
-		try {
-			conn=dataFactory.getConnection();
-			String query = "SELECT reccount FROM ARTICLE WHERE articlenum=?";
-			pstmt = conn.prepareStatement(query);
-			pstmt.setInt(1, articlenum);
-			ResultSet rs = pstmt.executeQuery();
-			rs.next();
-			int rrcount = rs.getInt("reccount");
-			System.out.println(rrcount+"reccount 현재 개수");
-			
-			rrcount = rrcount+1;
-			
-			conn2 = dataFactory.getConnection();
-			String query2 = "UPDATE ARTICLE SET reccount =? WHERE articlenum =?";
-			pstmt2 = conn2.prepareStatement(query2);
-			pstmt2.setInt(1, rrcount);
-			pstmt2.setInt(2, articlenum);
-			pstmt2.executeUpdate();
-			
-			
-			article.setRecCount(rrcount);
-			article.setArticlenum(articlenum);
-			
-			pstmt2.close();
-			pstmt.close();
-			conn2.close();
-			conn.close();
-			
-			
-		}catch(Exception e) {
-			e.printStackTrace();
-		}
-		
-		return article;
-	}
-	
-	
-	public List<ArticleVO> HDLarticles() { //헤드라인 기사 뽑기 
-		ArticleVO article = new ArticleVO();
-		List<ArticleVO> hdlArticlesList = new ArrayList<ArticleVO>();
-		String title;
-		String imageFileName;
-		int articlenum;
-		
-		try {
-		conn= dataFactory.getConnection();
-		String query = "SELECT title, img, articlenum FROM article WHERE hotissue=1 ORDER BY articlenum DESC";
-		pstmt=conn.prepareStatement(query);
-		ResultSet rs = pstmt.executeQuery();
-		
-		while(rs.next()) {
-			title=rs.getString("title");
-			imageFileName=rs.getString("img");
-			articlenum=rs.getInt("articlenum");
-			article.setTitle(title);
-			article.setImgFileName(imageFileName);
-			article.setArticlenum(articlenum);
-			hdlArticlesList.add(article);
-		}
-		
-		rs.close();
-		pstmt.close();
-		conn.close();
-		}catch(Exception e) {
-			e.printStackTrace();
-		}
-		return hdlArticlesList;
-	}
-	
-	
-//	public List<ArticleVO> HDLarticles() { //헤드라인 기사 뽑기 
-//		ArticleVO article = new ArticleVO();
-//		List<ArticleVO> hdlArticlesList = new ArrayList<ArticleVO>();
-//		String title;
-//		String imageFileName;
-//		int articlenum;
-//		
-//		try {
-//		conn= dataFactory.getConnection();
-//		String query = "SELECT title, img, articlenum FROM article WHERE hotissue=1 ORDER BY articlenum DESC";
-//		pstmt=conn.prepareStatement(query);
-//		ResultSet rs = pstmt.executeQuery();
-//		
-//		while(rs.next()) {
-//			title=rs.getString("title");
-//			imageFileName=rs.getString("img");
-//			articlenum=rs.getInt("articlenum");
-//			article.setTitle(title);
-//			article.setImgFileName(imageFileName);
-//			article.setArticlenum(articlenum);
-//			hdlArticlesList.add(article);
-//		}
-//		
-//		rs.close();
-//		pstmt.close();
-//		conn.close();
-//		}catch(Exception e) {
-//			e.printStackTrace();
-//		}
-//		return hdlArticlesList;
-//	}
-	
 }
