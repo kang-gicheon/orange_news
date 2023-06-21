@@ -39,8 +39,7 @@ public class ArticleService {
 		articleDAO.selectArticle(article, 0);
 	}
 	
-	
-	public List<ArticleVO> displayHDLarticle() {
+	public List<ArticleVO> displayHDLarticlesList() {
 		return articleDAO.HDLarticles();
 	}
 	
