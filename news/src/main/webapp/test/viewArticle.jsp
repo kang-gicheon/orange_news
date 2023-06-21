@@ -101,37 +101,53 @@ request.setCharacterEncoding("UTF-8");
 
 
 		</table>
-		</form>
-		<form method="post" action="${contextPath}/news/updateReact.do" name ="reactform">
-			<table align="center">
-				<!-- checkbox로 바꾸기 -->
-				<tr>
-					<td><input type="radio" name="react" value="좋아요"></input></td>
-					<td><input type="radio" name="react" value="훈훈해요"></input></td>
-					<td><input type="radio" name="react" value="슬퍼요"></input></td>
-					<td><input type="radio" name="react" value="화나요"></input></td>
-					<td><input type="radio" name="react" value="후속기사 원해요"></input></td>
+	</form>
+	<form method="post" action="${contextPath}/news/updateReact.do"
+		name="reactform">
+		<table align="center">
+			<!-- checkbox로 바꾸기 -->
+			<tr>
+				<td><input type="radio" name="react" value="좋아요"></input></td>
+				<td><input type="radio" name="react" value="훈훈해요"></input></td>
+				<td><input type="radio" name="react" value="슬퍼요"></input></td>
+				<td><input type="radio" name="react" value="화나요"></input></td>
+				<td><input type="radio" name="react" value="후속기사 원해요"></input></td>
 
-				</tr>
-				<tr>
-					<td colspan="5">현재 ${article.actype }의 개수 : ${article.rcount} </td>
-				</tr>
+			</tr>
+			<tr>
+				<td colspan="5">현재 ${article.actype }의 개수 : ${article.rcount}</td>
+			</tr>
 
-				<tr>
+			<tr>
 
-					<td colspan=5 align=center><input type=submit value="반응남기기" />
-					</td>
+				<td colspan=5 align=center><input type=submit value="반응남기기" />
+				</td>
 
-					<td colspan=5 align=center><input type=reset value="Reset"></td>
-				</tr>
-				
-				<tr>
+			</tr>
+		</table>
+	</form>
+
+	<form method="post" action="${contextPath}/news/updateRec.do"
+		name="recform">
+
+		<table>
+
+			<tr>
+				<td colspan="5">현재 추천 개수 : ${article.recCount }</td>
+			</tr>
+			<tr>
+				<td colspan="5">이 기사 추천하기</td>
+				<td colspan=5 align=center><input type=submit name="react"
+					value="추천" /></td>
+			</tr>
+
+			<tr>
 				<td colspan=5 align=center><input type=button value="리스트로 돌아가기"
 					onClick="backToList(this.form)"></td>
 			</tr>
-			</table>
-		</form>
-		
+		</table>
+	</form>
+
 
 </body>
 </html>
