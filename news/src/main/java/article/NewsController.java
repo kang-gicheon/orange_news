@@ -69,10 +69,13 @@ public class NewsController extends HttpServlet {
 
 		try {
 			List<ArticleVO> articlesList = new ArrayList<ArticleVO>();
+			List<ArticleVO> hotarticlesList = new ArrayList<ArticleVO>();
 			if (action == null) {
 				System.out.println("기본 화면");
-				articlesList = articleService.listArticles();
+				articlesList = articleService.listArticles(0); //0: 기사 번호에 따라 정렬 / 1: 추천 수에 따라 정렬
 				request.setAttribute("articlesList", articlesList);
+				hotarticlesList = articleService.listArticles(1);
+				request.setAttribute("hotarticlesList", hotarticlesList);
 				nextPage = "/test/mainPage.jsp";
 
 			}
@@ -185,6 +188,26 @@ public class NewsController extends HttpServlet {
 						+ "/news/viewArticle.do?articlenum=" + articlenum + "'; </script>");
 
 				return;
+			}
+			
+			else if (action.equals("/updateRec.do")) {
+				System.out.println("추천 업데이트");
+				String recOX = request.getParameter("react");
+				System.out.println(recOX + "<= 추천 받았는지");
+				
+				if (recOX.equals("추천")){
+					articleService.updateReccount(articleVO);
+					
+					int articlenum = articleVO.getArticlenum();
+					PrintWriter pw = response.getWriter();
+					pw.print("<script>" + " alert('기사가 추천되었습니다.');" + " location.href='" + request.getContextPath()
+							+ "/news/viewArticle.do?articlenum=" + articlenum + "'; </script>");
+
+					return;
+				}
+				else {
+					System.out.println("추천안했나봄");
+				}
 			}
 
 			else {
