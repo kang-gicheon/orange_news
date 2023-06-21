@@ -12,6 +12,7 @@ import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -50,30 +51,42 @@ public class NewsController extends HttpServlet {
 
 	private void doHandle(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		
+		
 		String nextPage = "";
-		String loginId = memberVO.getId();
-		int report = memberVO.getReporter();
 		request.setCharacterEncoding("utf-8");
 		response.setContentType("text/html;charset=utf-8");
 		String action = request.getPathInfo();
+		
+		//쿠키
+		Cookie[] cookies = request.getCookies();
+		Cookie articlenumCookie;
+		
+		//쿠키(path:/news)값 삭제 -> 메인페이지로 이동시 기사 쿠키 삭제
+		deleteCookie(cookies, response);
+		
 		System.out.println("action: " + action); // 어떤 액션인지 콘솔에서 확인용 (나중에 지워짐)
 
 		try {
 			List<ArticleVO> articlesList = new ArrayList<ArticleVO>();
+			
 			if (action == null) {
 				System.out.println("기본 화면");
 				articlesList = articleService.listArticles();
 				request.setAttribute("articlesList", articlesList);
 				nextPage = "/test/mainPage.jsp";
 
-			} else if (action.equals("/member.do")) { // 회원가입
-				System.out.println("회원가입");
 			}
+			
+//			else if (action.equals("/member.do")) { // 회원가입
+//				System.out.println("회원가입");
+//			}
 
-			else if (action.equals("/login.do")) { // 로그인
-				System.out.println("로그인");
-				nextPage = "/sign_in/login.jsp";
-			}
+//			else if (action.equals("/login.do")) { // 로그인
+//				System.out.println("로그인");
+//				nextPage = "/sign_in/login.jsp";
+//			}
+		
 
 			else if (action.equals("/articleForm.do")) { // 기사 클릭 (기사 조회)
 				System.out.println("기사");
@@ -116,11 +129,16 @@ public class NewsController extends HttpServlet {
 				String type = articleMap.get("articleType");
 				String hio = articleMap.get("hotissue");
 				String imgFileName = articleMap.get("imgFileName");
+				
+				manageCookieId(cookies, memberVO);
+				String id=memberVO.getId();
+				
 				articleVO.setTitle(title);
 				articleVO.setContent(content);
 				articleVO.setType(Integer.parseInt(type));
 				articleVO.setHotissue(Integer.parseInt(hio));
 				articleVO.setImgFileName(imgFileName);
+				articleVO.setId(id);
 				articleService.addArticle(articleVO);
 
 				if (imgFileName != null) {
@@ -133,14 +151,19 @@ public class NewsController extends HttpServlet {
 
 				PrintWriter pw = response.getWriter();
 				pw.print("<script>" + " alert('새 기사를 작성했습니다.');" + " location.href='" + request.getContextPath()
-						+ "/news/';" + "</script>");
+						+ "/news';" + "</script>");
 				return;
 
 			} else if (action.equals("/viewArticle.do")) {
 				int articlenum = Integer.parseInt(request.getParameter("articlenum"));
 				System.out.println(articlenum + " <= articlenumString입니다");
+				
+				articlenumCookie = new Cookie("articlenum", Integer.toString(articlenum));
+				articlenumCookie.setMaxAge(60*60*24);
+				response.addCookie(articlenumCookie);
+				
 				articleVO.setArticlenum(articlenum);
-				articleService.viewArticle(articleVO);
+				articleService.viewArticle(articleVO);				
 				request.setAttribute("article", articleVO);
 				nextPage = "/test/viewArticle.jsp";
 			}
@@ -165,6 +188,26 @@ public class NewsController extends HttpServlet {
 
 				return;
 			}
+			
+			else if (action.equals("/updateRec.do")) {
+				System.out.println("추천 업데이트");
+				String recOX = request.getParameter("react");
+				System.out.println(recOX + "<= 추천 받았는지");
+				
+				if (recOX.equals("O")){
+					articleService.updateReccount(articleVO);
+					
+					int articlenum = articleVO.getArticlenum();
+					PrintWriter pw = response.getWriter();
+					pw.print("<script>" + " alert('기사가 추천되었습니다.');" + " location.href='" + request.getContextPath()
+							+ "/news/viewArticle.do?articlenum=" + articlenum + "'; </script>");
+
+					return;
+				}
+				else {
+					System.out.println("추천안했나봄");
+				}
+			}
 
 			else {
 				System.out.println("그 외");
@@ -172,7 +215,8 @@ public class NewsController extends HttpServlet {
 				pw.print("<script> location.href='" + request.getContextPath() + "/news';" + "</script>");
 				return;
 			}
-
+			
+			
 			RequestDispatcher dispatch = request.getRequestDispatcher(nextPage);
 			dispatch.forward(request, response);
 
@@ -221,6 +265,30 @@ public class NewsController extends HttpServlet {
 			e.printStackTrace();
 		}
 		return articleMap;
+	}
+	
+	private void manageCookieId(Cookie cookies[], MemberVO memberVO) {
+		if (cookies != null) {
+		    for (Cookie cookie : cookies) {
+		    	String cookieName = cookie.getName();
+		    	if(cookieName.equals("loginId")) {
+		    		System.out.println("로그인 상태 확인 중");
+		    		System.out.println(cookieName+": "+cookie.getValue());
+		    		memberVO.setId(cookie.getValue());
+		    	}	
+		    }
+		}
+	}
+	
+	private void deleteCookie(Cookie cookies[], HttpServletResponse response) throws ServletException, IOException {
+		if(cookies != null) {
+			for(Cookie cookie : cookies) {
+					cookie.setPath("/news");
+					cookie.setMaxAge(0);
+					response.addCookie(cookie);
+					
+			}
+		}
 	}
 
 }

@@ -45,6 +45,7 @@ public class ArticleDAO {
 			String query = "SELECT title, content, articlenum,type, reccount, hotissue,img, id "+
 			" FROM ARTICLE ORDER by ARTICLENUM DESC";
 			
+			System.out.println(query);
 			pstmt = conn.prepareStatement(query);
 			ResultSet rs = pstmt.executeQuery();
 			
@@ -91,6 +92,7 @@ public class ArticleDAO {
 		
 		try {
 			
+			System.out.println("insertNewArticle메소드");
 			conn = dataFactory.getConnection();
 			String title = article.getTitle();
 			String content = article.getContent();
@@ -128,6 +130,7 @@ public class ArticleDAO {
 			
 			conn.close();
 			
+			System.out.println("으아아아아아아아아아");
 			conn2=dataFactory.getConnection();
 			int articlenum = 0;
 			String check = "SELECT articlenum FROM ARTICLE WHERE title =?";
@@ -141,7 +144,10 @@ public class ArticleDAO {
 			rsrs.close();
 			ps.close();
 			
+			System.out.println("반응 넣기 메소드");
 			conn2 = dataFactory.getConnection();
+			System.out.println(articlenum +" <= articlenum");
+			
 			
 			String query2 = "INSERT INTO REACT (r_type, rcount, articlenum) values(?,0,?) ";
 			pstmt1 = conn2.prepareStatement(query2);
@@ -185,6 +191,7 @@ public class ArticleDAO {
 			conn=dataFactory.getConnection();
 			String query ="SELECT title, writedate, content, articlenum, type, reccount, hotissue, img, id"
 					+" from ARTICLE where articlenum=?";
+			System.out.println(query);
 			pstmt=conn.prepareStatement(query);
 			pstmt.setInt(1, article.getArticlenum());
 			ResultSet rs = pstmt.executeQuery();
@@ -221,6 +228,7 @@ public class ArticleDAO {
 		try {
 			conn=dataFactory.getConnection();
 			String query = "SELECT r_type, rcount from REACT where articlenum=?";
+			System.out.println(query);
 			pstmt= conn.prepareStatement(query);
 			pstmt.setInt(1, article.getArticlenum());
 			ResultSet rs  = pstmt.executeQuery();
@@ -244,19 +252,10 @@ public class ArticleDAO {
 	
 	
 	public ArticleVO updateReact (ArticleVO article) {
+		System.out.println("updateReact 메소드 들어옴");
 		String r_type = article.getActype();
 		int articlenum =article.getArticlenum();
-		
-//		int rcount = 0;
-//		try {
-//		String query = "SELECT rcount FROM REACT where R_TYPE = ?";
-//		pstmt= conn.prepareStatement(query);
-//		pstmt.setString(1, r_type);
-//		ResultSet rs = pstmt.executeQuery();
-//		while(rs.next()) {
-//			rcount = rs.getInt("rcount");
-//		}
-//		
+			
 		try {
 			conn = dataFactory.getConnection();
 			String query = "SELECT rcount FROM REACT WHERE r_type=? and articlenum = ?";
@@ -266,6 +265,7 @@ public class ArticleDAO {
 			ResultSet rs = pstmt.executeQuery();
 			while(rs.next()) {
 				rcount = rs.getInt("rcount"); //rcount 받아옴
+				System.out.println(r_type+"의 현재 개수 : "+rcount);
 			}
 			
 			rcount=rcount+1;
@@ -282,12 +282,100 @@ public class ArticleDAO {
 			article.setRcount(rcount);
 			article.setArticlenum(articlenum);
 			
+		
 			pstmt2.close();
 			conn2.close();
 			pstmt.close();
 			conn.close();
 		
 		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return article;
+	}
+	
+	public ArticleVO updateReccount(ArticleVO article) {
+		System.out.println("updateReccount 메소드 들어옴");
+		int articlenum = article.getArticlenum();
+		
+		
+		try {
+			conn=dataFactory.getConnection();
+			String query = "SELECT reccount FROM ARTICLE WHERE articlenum=?";
+			pstmt = conn.prepareStatement(query);
+			pstmt.setInt(1, articlenum);
+			ResultSet rs = pstmt.executeQuery();
+			rs.next();
+			int rrcount = rs.getInt("reccount");
+			System.out.println(rrcount+"reccount 현재 개수");
+			
+			rrcount = rrcount+1;
+			
+			conn2 = dataFactory.getConnection();
+			String query2 = "UPDATE ARTICLE SET reccount =? WHERE articlenum =?";
+			pstmt2 = conn2.prepareStatement(query2);
+			pstmt2.setInt(1, rrcount);
+			pstmt2.setInt(2, articlenum);
+			pstmt2.executeUpdate();
+			
+			
+			article.setRecCount(rrcount);
+			article.setArticlenum(articlenum);
+			
+			pstmt2.close();
+			pstmt.close();
+			conn2.close();
+			conn.close();
+			
+			
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		return article;
+	}
+	
+	public ArticleVO HDLarticle() { //헤드라인 기사 뽑기 
+		
+		ArticleVO article = new ArticleVO();
+		int articlenum = 0;
+		
+		try {
+		conn= dataFactory.getConnection();
+		String query = "SELECT max(articlenum) FROM ARTICLE where hotissue=1";
+		pstmt=conn.prepareStatement(query);
+		ResultSet rs = pstmt.executeQuery();
+		
+		while(rs.next()) {
+			articlenum = rs.getInt("max(articlenum)"); 
+		}
+		
+		System.out.println(articlenum + "<= 헤드라인 기사 번호");
+		
+		conn2= dataFactory.getConnection();
+				
+		String query2 = "SELECT title, img, type FROM ARTICLE WHERE articlenum = ?";
+		pstmt2= conn2.prepareStatement(query2);
+		pstmt2.setInt(1, articlenum);
+		ResultSet rs2 = pstmt2.executeQuery();
+		
+		rs2.next();
+			String title = rs2.getString("title");
+			String imageFileName = rs2.getString("img");
+			int type = rs2.getInt("type");
+			
+			article.setTitle(title);
+			article.setImgFileName(imageFileName);
+			article.setType(type);
+		
+		rs.close();
+		rs2.close();
+		pstmt.close();
+		pstmt2.close();
+		conn.close();
+		conn2.close();
+		
+		}catch(Exception e) {
 			e.printStackTrace();
 		}
 		return article;
