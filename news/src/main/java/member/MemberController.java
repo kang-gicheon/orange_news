@@ -128,7 +128,7 @@ public class MemberController extends HttpServlet {
 				return;
 				
 			}else if(action.equals("/loginForm.do")) {		//로그인입력 창 보내기
-				memberVO.setId(null);
+				clearData(memberVO);
 				manageCookieId(cookies, memberVO);
 				System.out.println("로그인 중인 아이디: " + memberVO.getId());
 				if(memberVO.getId() != null ) {
@@ -161,14 +161,17 @@ public class MemberController extends HttpServlet {
 					
 					session=request.getSession();
 					session.setAttribute("loginIdSess", memberVO.getId());
-					nextPage="/interchange/tonews.jsp";
+					
+					PrintWriter pw = response.getWriter();
+					pw.write("<script>"	+ " location.href='"
+										+ request.getContextPath()
+										+ "/news/mainpage.do"
+										+ "';"
+										+ "</script>");
+					return;
 				}
 				else {						//로그인 실패시
-					memberVO.setId(null);
-					memberVO.setName(null);
-					memberVO.setPwd(null);
-					memberVO.setPnum(null);
-					memberVO.setEmail(null);
+					clearData(memberVO);
 					PrintWriter pw = response.getWriter();
 					pw.print("<script>" + "alert('로그인에 실패하였습니다');"
 										+ " location.href='"
@@ -180,11 +183,7 @@ public class MemberController extends HttpServlet {
 				}
 				
 			}else if(action.equals("/logout.do")) {		//로그아웃
-				memberVO.setId(null);
-				memberVO.setName(null);
-				memberVO.setPwd(null);
-				memberVO.setPnum(null);
-				memberVO.setEmail(null);
+				clearData(memberVO);
 				loginCookie = null;
 				deleteCookie(cookies, response);
 				
@@ -200,7 +199,7 @@ public class MemberController extends HttpServlet {
 									+ "</script>");
 				return;
 			}else if(action.equals("/modmember.do")) {		//회원수정 페이지로 이동
-				memberVO.setId(null);
+				clearData(memberVO);
 				manageCookieId(cookies, memberVO);
 				System.out.println("로그인 중인 아이디: "+memberVO.getId());
 				if(memberVO.getId() == null ) {
@@ -282,7 +281,7 @@ public class MemberController extends HttpServlet {
 				}
 				nextPage="/find_account/find_id.jsp";
 			}else if(action.equals("/resultid.do")) {		//아이디 찾기 결과
-				memberVO.setId(null);
+				clearData(memberVO);
 				manageCookieId(cookies, memberVO);
 				System.out.println("로그인 중인 아이디: "+memberVO.getId());
 				if(memberVO.getId() != null ) {
@@ -316,7 +315,7 @@ public class MemberController extends HttpServlet {
 				request.setAttribute("memberVO", memberVO);
 				nextPage="/account_findresult/account_id.jsp";
 			}else if(action.equals("/findpwd.do")) {		//비번 찾기
-				memberVO.setId(null);
+				clearData(memberVO);
 				manageCookieId(cookies, memberVO);
 				System.out.println("로그인 중인 아이디: "+memberVO.getId());
 				if(memberVO.getId() != null ) {
@@ -332,7 +331,7 @@ public class MemberController extends HttpServlet {
 				
 				nextPage="/find_account/find_password.jsp";
 			}else if(action.equals("/resultpwd.do")) {		//비번 찾기 결과
-				memberVO.setId(null);
+				clearData(memberVO);
 				manageCookieId(cookies, memberVO);
 				System.out.println("로그인 중인 아이디: "+memberVO.getId());
 				if(memberVO.getId() != null ) {
@@ -364,6 +363,7 @@ public class MemberController extends HttpServlet {
 				request.setAttribute("memberVO", memberVO);
 				nextPage="/account_findresult/account_pwd.jsp";
 			}else if(action.equals("/deleteAccount.do")) {		//회원탈퇴
+				clearData(memberVO);
 				manageCookieId(cookies, memberVO);
 				String id = memberVO.getId();
 				memberDAO.withdraw(id);
@@ -413,5 +413,13 @@ public class MemberController extends HttpServlet {
 					
 			}
 		}
+	}
+	
+	private void clearData(MemberVO memberVO){
+		memberVO.setId(null);
+		memberVO.setName(null);
+		memberVO.setPwd(null);
+		memberVO.setPnum(null);
+		memberVO.setEmail(null);
 	}
 }
