@@ -24,7 +24,7 @@ public class ArticleDAO {
 	private Connection conn2;
 	private DataSource dataFactory;
 	
-	public ArticleDAO() {
+	public ArticleDAO() {	//ArticleDAO 객체 생성(DB연결)
 		try {
 			Context ctx = new InitialContext();
 			Context envCtx = (Context) ctx.lookup("java:/comp/env");
@@ -34,7 +34,7 @@ public class ArticleDAO {
 		}
 	}
 	
-	public int selectTotArticles(int type) {
+	public int selectTotArticles(int type) {	//type 값 기사들의 총 갯수를 산출하는 메서드
 		try {
 			conn=dataFactory.getConnection();
 			String query="SELECT COUNT(articlenum) FROM member WHERE type=?";
@@ -52,13 +52,13 @@ public class ArticleDAO {
 		return 0;
 	}
 	
-	public List<ArticleVO> selectAllArticles(int a){
+	public List<ArticleVO> selectAllArticles(int a){	//모든 기사의 거의 모든 컬럼 데이터를
 		System.out.println("selectAllArticles 들어옴");
 		List<ArticleVO> articlesList = new ArrayList<ArticleVO>();
 		
 		try {
 			conn=dataFactory.getConnection();
-			String query = "SELECT title, content, articlenum,type, reccount, hotissue,img, id "+
+			String query = "SELECT title, updatedate, content, articlenum, type, reccount, hotissue, img, id "+
 			" FROM ARTICLE ORDER by ";
 			if(a==0) {
 				query +="articlenum";
@@ -72,6 +72,7 @@ public class ArticleDAO {
 			
 			while(rs.next()) {
 				String title = rs.getString("title");
+				Date updatedate = rs.getDate("updatedate");
 				String content = rs.getString("content");
 				int articleNum = rs.getInt("articlenum");
 				int type = rs.getInt("type");
@@ -82,6 +83,7 @@ public class ArticleDAO {
 				
 				ArticleVO article = new ArticleVO();
 				article.setTitle(title);
+				article.setUpdatedate(updatedate);
 				article.setContent(content);
 				article.setArticlenum(articleNum);
 				article.setType(type);
@@ -107,8 +109,8 @@ public class ArticleDAO {
 		try {
 			conn=dataFactory.getConnection();
 			String query="SELECT * FROM ("
-					+ "SELECT ROWNUM as recnum, title, content, articlenum,type, reccount, hotissue,img, id "
-					+ "FROM(SELECT title, content, articlenum,type, reccount, hotissue,img, id"
+					+ "SELECT ROWNUM as recnum, title, updatedate, content, articlenum,type, reccount, hotissue,img, id "
+					+ "FROM(SELECT title, updatedate, content, articlenum, type, reccount, hotissue, img, id"
 					+ " FROM article WHERE type=? ORDER by articlenum DESC)) "
 					+ "WHERE recNum between(?-1)*100+(?-1)*10+1 and (?-1)*100+?*10";
 			pstmt=conn.prepareStatement(query);
@@ -121,6 +123,7 @@ public class ArticleDAO {
 			while(rs.next()) {
 				ArticleVO article = new ArticleVO();
 				String title = rs.getString("title");
+				Date updatedate = rs.getDate("updatedate");
 				String content = rs.getString("content");
 				int articleNum = rs.getInt("articlenum");
 				type = rs.getInt("type");
@@ -130,6 +133,7 @@ public class ArticleDAO {
 				String id = rs.getString("id");
 				
 				article.setTitle(title);
+				article.setUpdatedate(updatedate);
 				article.setContent(content);
 				article.setArticlenum(articleNum);
 				article.setType(type);
