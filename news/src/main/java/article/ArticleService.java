@@ -1,6 +1,9 @@
 package article;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ArticleService {
 	
@@ -30,9 +33,27 @@ public class ArticleService {
 		return articlesList;
 	}
 	
-	public List<ArticleVO> listTypeArticles(){
-		List<ArticleVO> articlesofTypeList = articleDAO.selectArticlesofType();
-		return articlesofTypeList;
+	public Map listTypeArticles(Map<String, Integer> pagingMap, int type){
+		Map articlesMap = new HashMap();
+		List<ArticleVO> articlesofTypeList = articleDAO.selectArticlesofType(pagingMap, type);
+		int totArticles = articleDAO.selectTotArticles(type);
+		if(type==1) {
+			articlesMap.put("articleType1", articlesofTypeList);
+		} else if(type==2) {
+			articlesMap.put("articleType2", articlesofTypeList);
+		} else if(type==3) {
+			articlesMap.put("articleType3", articlesofTypeList);
+		} else if(type==4) {
+			articlesMap.put("articleType4", articlesofTypeList);
+		} else if(type==5) {
+			articlesMap.put("articleType5", articlesofTypeList);
+		} else if(type==6) {
+			articlesMap.put("articleType6", articlesofTypeList);
+		} else if(type==7) {
+			articlesMap.put("articleType7", articlesofTypeList);
+		}
+		articlesMap.put("totArticles", totArticles);
+		return articlesMap;
 	}
 	
 	public void viewArticle(ArticleVO article) {

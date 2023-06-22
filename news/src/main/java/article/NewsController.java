@@ -55,55 +55,174 @@ public class NewsController extends HttpServlet {
 		request.setCharacterEncoding("utf-8");
 		response.setContentType("text/html;charset=utf-8");
 		String action = request.getPathInfo();
-		
-		//쿠키
+
+		// 쿠키
 		Cookie[] cookies = request.getCookies();
 		Cookie articlenumCookie;
-		
-		//쿠키(path:/news)값 삭제 -> 메인페이지로 이동시 기사 쿠키 삭제
+
+		// 쿠키(path:/news)값 삭제 -> 메인페이지로 이동시 기사 쿠키 삭제
 		deleteCookie(cookies, response);
-		
+
 		System.out.println("action: " + action); // 어떤 액션인지 콘솔에서 확인용 (나중에 지워짐)
-		
+
 		try {
-			List<ArticleVO> articlesList = new ArrayList<ArticleVO>();
-			List<ArticleVO> hotarticlesList = new ArrayList<ArticleVO>();
-			List<ArticleVO> hdlArticlesList = new ArrayList<ArticleVO>();
+
 			ArticleVO headarticle = new ArticleVO();
 			if (action == null) {
+				List<ArticleVO> articlesList = new ArrayList<ArticleVO>();
+				List<ArticleVO> hotarticlesList = new ArrayList<ArticleVO>();
+				List<ArticleVO> hdlArticlesList = new ArrayList<ArticleVO>();
+
 				System.out.println("기본 화면");
-				articlesList = articleService.listArticles(0); //0: 기사 번호에 따라 정렬 / 1: 추천 수에 따라 정렬
+				articlesList = articleService.listArticles(0); // 0: 기사 번호에 따라 정렬 / 1: 추천 수에 따라 정렬
 				request.setAttribute("articlesList", articlesList);
 				hotarticlesList = articleService.listArticles(1);
 				request.setAttribute("hotarticlesList", hotarticlesList);
 				articleService.displayHDLarticlesList(hdlArticlesList);
 				request.setAttribute("headarticlesList", hdlArticlesList);
 				articleService.displayHDLarticle(headarticle);
-				System.out.println("헤드라인 기사 번호: "+ headarticle.getArticlenum());
+				System.out.println("헤드라인 기사 번호: " + headarticle.getArticlenum());
 				request.setAttribute("hdlmain", headarticle);
 				nextPage = "/test/mainPage.jsp";
-			}
-			else if (action.equals("/addarticleForm.do")) { // 기사 작성 폼 요청 액션
+			} else if (action.equals("/(각타입리스트링크1)")) {
+				int type = 1;
+
+				String _section = request.getParameter("section");
+				String _pageNum = request.getParameter("pageNum");
+				int section = Integer.parseInt(_section == null ? "1" : _section);
+				int pageNum = Integer.parseInt(_pageNum == null ? "1" : _pageNum);
+
+				Map<String, Integer> pagingMap = new HashMap<String, Integer>();
+				pagingMap.put("section", section);
+				pagingMap.put("pageNum", pageNum);
+				Map articlesMap = articleService.listTypeArticles(pagingMap, type);
+				articlesMap.put("section", section);
+				articlesMap.put("pageNum", pageNum);
+
+				request.setAttribute("articlesMap", articlesMap);
+				nextPage = "";
+			} else if (action.equals("/(각타입리스트링크2)")) {
+				int type = 2;
+
+				String _section = request.getParameter("section");
+				String _pageNum = request.getParameter("pageNum");
+				int section = Integer.parseInt(_section == null ? "1" : _section);
+				int pageNum = Integer.parseInt(_pageNum == null ? "1" : _pageNum);
+
+				Map<String, Integer> pagingMap = new HashMap<String, Integer>();
+				pagingMap.put("section", section);
+				pagingMap.put("pageNum", pageNum);
+				Map articlesMap = articleService.listTypeArticles(pagingMap, type);
+				articlesMap.put("section", section);
+				articlesMap.put("pageNum", pageNum);
+
+				request.setAttribute("articlesMap", articlesMap);
+				nextPage = "";
+			} else if (action.equals("/(각타입리스트링크3)")) {
+				int type = 3;
+
+				String _section = request.getParameter("section");
+				String _pageNum = request.getParameter("pageNum");
+				int section = Integer.parseInt(_section == null ? "1" : _section);
+				int pageNum = Integer.parseInt(_pageNum == null ? "1" : _pageNum);
+
+				Map<String, Integer> pagingMap = new HashMap<String, Integer>();
+				pagingMap.put("section", section);
+				pagingMap.put("pageNum", pageNum);
+				Map articlesMap = articleService.listTypeArticles(pagingMap, type);
+				articlesMap.put("section", section);
+				articlesMap.put("pageNum", pageNum);
+
+				request.setAttribute("articlesMap", articlesMap);
+				nextPage = "";
+			} else if (action.equals("/(각타입리스트링크4)")) {
+				int type = 4;
+
+				String _section = request.getParameter("section");
+				String _pageNum = request.getParameter("pageNum");
+				int section = Integer.parseInt(_section == null ? "1" : _section);
+				int pageNum = Integer.parseInt(_pageNum == null ? "1" : _pageNum);
+
+				Map<String, Integer> pagingMap = new HashMap<String, Integer>();
+				pagingMap.put("section", section);
+				pagingMap.put("pageNum", pageNum);
+				Map articlesMap = articleService.listTypeArticles(pagingMap, type);
+				articlesMap.put("section", section);
+				articlesMap.put("pageNum", pageNum);
+
+				request.setAttribute("articlesMap", articlesMap);
+				nextPage = "";
+			} else if (action.equals("/(각타입리스트링크5)")) {
+				int type = 5;
+
+				String _section = request.getParameter("section");
+				String _pageNum = request.getParameter("pageNum");
+				int section = Integer.parseInt(_section == null ? "1" : _section);
+				int pageNum = Integer.parseInt(_pageNum == null ? "1" : _pageNum);
+
+				Map<String, Integer> pagingMap = new HashMap<String, Integer>();
+				pagingMap.put("section", section);
+				pagingMap.put("pageNum", pageNum);
+				Map articlesMap = articleService.listTypeArticles(pagingMap, type);
+				articlesMap.put("section", section);
+				articlesMap.put("pageNum", pageNum);
+
+				request.setAttribute("articlesMap", articlesMap);
+				nextPage = "";
+			} else if (action.equals("/(각타입리스트링크6)")) {
+				int type = 6;
+
+				String _section = request.getParameter("section");
+				String _pageNum = request.getParameter("pageNum");
+				int section = Integer.parseInt(_section == null ? "1" : _section);
+				int pageNum = Integer.parseInt(_pageNum == null ? "1" : _pageNum);
+
+				Map<String, Integer> pagingMap = new HashMap<String, Integer>();
+				pagingMap.put("section", section);
+				pagingMap.put("pageNum", pageNum);
+				Map articlesMap = articleService.listTypeArticles(pagingMap, type);
+				articlesMap.put("section", section);
+				articlesMap.put("pageNum", pageNum);
+
+				request.setAttribute("articlesMap", articlesMap);
+				nextPage = "";
+			} else if (action.equals("/(각타입리스트링크7)")) {
+				int type = 7;
+
+				String _section = request.getParameter("section");
+				String _pageNum = request.getParameter("pageNum");
+				int section = Integer.parseInt(_section == null ? "1" : _section);
+				int pageNum = Integer.parseInt(_pageNum == null ? "1" : _pageNum);
+
+				Map<String, Integer> pagingMap = new HashMap<String, Integer>();
+				pagingMap.put("section", section);
+				pagingMap.put("pageNum", pageNum);
+				Map articlesMap = articleService.listTypeArticles(pagingMap, type);
+				articlesMap.put("section", section);
+				articlesMap.put("pageNum", pageNum);
+
+				request.setAttribute("articlesMap", articlesMap);
+				nextPage = "";
+			} else if (action.equals("/addarticleForm.do")) { // 기사 작성 폼 요청 액션
 				System.out.println("기사 작성 폼 요청");
 
 				manageCookieId(cookies, memberVO);
 				manageCookieRep(cookies, memberVO);
 				String loginId = memberVO.getId();
 				int report = memberVO.getReporter();
-				if(loginId==null) {		//로그인이 안 되어있을 경우
+				if (loginId == null) { // 로그인이 안 되어있을 경우
 					PrintWriter pw = response.getWriter();
 					pw.print("<script>" + " alert('로그인이 필요합니다.');" + " location.href='" + request.getContextPath()
 							+ "/news/login.do';" + "</script>");
 					return;
-				}else if (loginId!=null && report==0) { // 로그인은 되어있으나 기자 계정이 아닌 경우
+				} else if (loginId != null && report == 0) { // 로그인은 되어있으나 기자 계정이 아닌 경우
 					PrintWriter pw = response.getWriter();
 					pw.print("<script>" + " alert('기자 계정이 아닙니다.');" + " location.href='" + request.getContextPath()
 							+ "/news/';" + "</script>");
 					return;
 				}
 				nextPage = "/test/addArticlePage.jsp";
-			}
-			else if (action.equals("/addArticle.do")) { // 기사 작성 (기자로 로그인시)
+			} else if (action.equals("/addArticle.do")) { // 기사 작성 (기자로 로그인시)
 				System.out.println("기사작성액션받음");
 
 				Map<String, String> articleMap = upload(request, response);
@@ -112,10 +231,10 @@ public class NewsController extends HttpServlet {
 				String type = articleMap.get("articleType");
 				String hio = articleMap.get("hotissue");
 				String imgFileName = articleMap.get("imgFileName");
-				
+
 				manageCookieId(cookies, memberVO);
-				String id=memberVO.getId();
-				
+				String id = memberVO.getId();
+
 				articleVO.setTitle(title);
 				articleVO.setContent(content);
 				articleVO.setType(Integer.parseInt(type));
@@ -136,44 +255,41 @@ public class NewsController extends HttpServlet {
 				pw.print("<script>" + " alert('새 기사를 작성했습니다.');" + " location.href='" + request.getContextPath()
 						+ "/news';" + "</script>");
 				return;
-				
-			}
-			else if (action.equals("/viewArticle.do")) {
+
+			} else if (action.equals("/viewArticle.do")) {
 				int articlenum = Integer.parseInt(request.getParameter("articlenum"));
 				System.out.println(articlenum + " <= articlenumString입니다");
-				
+
 				articlenumCookie = new Cookie("articlenum", Integer.toString(articlenum));
-				articlenumCookie.setMaxAge(60*60*24);
+				articlenumCookie.setMaxAge(60 * 60 * 24);
 				response.addCookie(articlenumCookie);
-				
+
 				articleVO.setArticlenum(articlenum);
-				articleService.viewArticle(articleVO);				
+				articleService.viewArticle(articleVO);
 				request.setAttribute("article", articleVO);
 				nextPage = "/test/viewArticle.jsp";
-			}
-			else if (action.equals("/updateReact.do")) {
+			} else if (action.equals("/updateReact.do")) {
 				System.out.println("반응 업데이트");
-				
+
 				String type = request.getParameter("react");
 				System.out.println(type + " <= type입니다");
-				
+
 				articleVO.setActype(type);
 				articleService.updateAction(articleVO);
-				
+
 				int articlenum = articleVO.getArticlenum();
 				PrintWriter pw = response.getWriter();
 				pw.print("<script>" + " alert('반응이 등록되었습니다.');" + " location.href='" + request.getContextPath()
 						+ "/news/viewArticle.do?articlenum=" + articlenum + "'; </script>");
 				return;
-			}
-			else if (action.equals("/updateRec.do")) {
+			} else if (action.equals("/updateRec.do")) {
 				System.out.println("추천 업데이트");
 				String recOX = request.getParameter("react");
 				System.out.println(recOX + "<= 추천 받았는지");
-				
-				if (recOX.equals("추천")){
+
+				if (recOX.equals("추천")) {
 					articleService.updateReccount(articleVO);
-					
+
 					int articlenum = articleVO.getArticlenum();
 					PrintWriter pw = response.getWriter();
 					pw.print("<script>" + " alert('기사가 추천되었습니다.');" + " location.href='" + request.getContextPath()
@@ -182,14 +298,13 @@ public class NewsController extends HttpServlet {
 				} else {
 					System.out.println("추천안했나봄");
 				}
-			}
-			else {
+			} else {
 				System.out.println("그 외");
 				PrintWriter pw = response.getWriter();
 				pw.print("<script> location.href='" + request.getContextPath() + "/news';" + "</script>");
 				return;
 			}
-			
+
 			RequestDispatcher dispatch = request.getRequestDispatcher(nextPage);
 			dispatch.forward(request, response);
 
@@ -239,45 +354,45 @@ public class NewsController extends HttpServlet {
 		}
 		return articleMap;
 	}
-	
+
 	private void manageCookieId(Cookie cookies[], MemberVO memberVO) {
 		if (cookies != null) {
-		    for (Cookie cookie : cookies) {
-		    	String cookieName = cookie.getName();
-		    	if(cookieName.equals("loginId")) {
-		    		System.out.println("로그인 상태 확인 중");
-		    		System.out.println(cookieName+": "+cookie.getValue());
-		    		memberVO.setId(cookie.getValue());
-		    	}	
-		    }
-		}
-	}
-	
-	private void manageCookieRep(Cookie cookies[], MemberVO memberVO) {
-		if (cookies != null) {
-		    for (Cookie cookie : cookies) {
-		    	String cookieName = cookie.getName();
-		    	if(cookieName.equals("reporter")) {
-		    		System.out.println("로그인 상태 확인 중");
-		    		System.out.println(cookieName+": "+cookie.getValue());
-		    		memberVO.setReporter(Integer.parseInt(cookie.getValue()));
-		    	}	
-		    }
-		}
-	}
-	
-	private void deleteCookie(Cookie cookies[], HttpServletResponse response) throws ServletException, IOException {
-		if(cookies != null) {
-			for(Cookie cookie : cookies) {
-					cookie.setPath("/news");
-					cookie.setMaxAge(0);
-					response.addCookie(cookie);
-					
+			for (Cookie cookie : cookies) {
+				String cookieName = cookie.getName();
+				if (cookieName.equals("loginId")) {
+					System.out.println("로그인 상태 확인 중");
+					System.out.println(cookieName + ": " + cookie.getValue());
+					memberVO.setId(cookie.getValue());
+				}
 			}
 		}
 	}
-	
-	private void clearData(MemberVO memberVO){
+
+	private void manageCookieRep(Cookie cookies[], MemberVO memberVO) {
+		if (cookies != null) {
+			for (Cookie cookie : cookies) {
+				String cookieName = cookie.getName();
+				if (cookieName.equals("reporter")) {
+					System.out.println("로그인 상태 확인 중");
+					System.out.println(cookieName + ": " + cookie.getValue());
+					memberVO.setReporter(Integer.parseInt(cookie.getValue()));
+				}
+			}
+		}
+	}
+
+	private void deleteCookie(Cookie cookies[], HttpServletResponse response) throws ServletException, IOException {
+		if (cookies != null) {
+			for (Cookie cookie : cookies) {
+				cookie.setPath("/news");
+				cookie.setMaxAge(0);
+				response.addCookie(cookie);
+
+			}
+		}
+	}
+
+	private void clearData(MemberVO memberVO) {
 		articleVO.setTitle(null);
 		articleVO.setContent(null);
 		articleVO.setType(0);

@@ -67,9 +67,7 @@ request.setCharacterEncoding("UTF-8");
 									${hArticle.title} </a></td>
 						</tr>
 					</c:if>
-
 				</c:forEach>
-
 			</c:when>
 		</c:choose>
 	</table>
@@ -98,7 +96,6 @@ request.setCharacterEncoding("UTF-8");
 					varStatus="articleNum">
 					<c:if test="${article.hotissue == 0 }">
 						<tr align="center">
-							<td width="5%">${articleNum.count }</td>
 							<td width="30%"><a
 								href="${contextPath}/news/viewArticle.do?articlenum=${article.articlenum}">
 									<img
@@ -136,7 +133,7 @@ request.setCharacterEncoding("UTF-8");
 					varStatus="articleNum">
 					<c:if test="${article.hotissue == 0 }">
 						<tr align="center">
-							<td width="5%">${articleNum.count }</td>
+							<td width="5%">${article.articlenum }</td>
 							<td width="30%"><a
 								href="${contextPath}/news/viewArticle.do?articlenum=${article.articlenum}">
 									<img

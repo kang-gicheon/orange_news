@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -31,6 +32,24 @@ public class ArticleDAO {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public int selectTotArticles(int type) {
+		try {
+			conn=dataFactory.getConnection();
+			String query="SELECT COUNT(articlenum) FROM member WHERE type=?";
+			pstmt=conn.prepareStatement(query);
+			pstmt.setInt(1, type);
+			ResultSet rs = pstmt.executeQuery();
+			if(rs.next())
+				return (rs.getInt(1));
+			rs.close();
+			pstmt.close();
+			conn.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return 0;
 	}
 	
 	public List<ArticleVO> selectAllArticles(int a){
@@ -81,18 +100,26 @@ public class ArticleDAO {
 		return articlesList;
 	}
 	
-	public List<ArticleVO> selectArticlesofType(){
+	public List<ArticleVO> selectArticlesofType(Map<String, Integer> pagingMap, int type){
 		List<ArticleVO> articlesofTypeList = new ArrayList<ArticleVO>();
-		ArticleVO article = new ArticleVO();
+		int section = (Integer) pagingMap.get("section");
+		int pageNum = (Integer) pagingMap.get("pageNum");
 		try {
 			conn=dataFactory.getConnection();
-			int type = article.getType();
-			String query="SELECT title, content, articlenum,type, reccount, hotissue,img, id"
-					+ " FROM article WHERE type=? ORDER by articlenum DESC";
+			String query="SELECT * FROM ("
+					+ "SELECT ROWNUM as recnum, title, content, articlenum,type, reccount, hotissue,img, id"
+					+ "FROM(SELECT title, content, articlenum,type, reccount, hotissue,img, id"
+					+ " FROM article WHERE type=? ORDER by articlenum DESC)) "
+					+ "WHERE recNum between(?-1)*100+(?-1)*10+1 and (?-1)*100+?*10";
 			pstmt=conn.prepareStatement(query);
 			pstmt.setInt(1, type);
+			pstmt.setInt(2, section);
+			pstmt.setInt(3, pageNum);
+			pstmt.setInt(4, section);
+			pstmt.setInt(5, pageNum);
 			ResultSet rs = pstmt.executeQuery();
 			while(rs.next()) {
+				ArticleVO article = new ArticleVO();
 				String title = rs.getString("title");
 				String content = rs.getString("content");
 				int articleNum = rs.getInt("articlenum");
@@ -207,12 +234,14 @@ public class ArticleDAO {
 			if(a==0) {
 				query += " WHERE articlenum=?)";
 			} else if(a==1) {
-				query += " ORDER BY articlenum DESC) WHERE ROWNUM = 1";
+				query += " WHERE hotissue=? ORDER BY articlenum DESC) WHERE ROWNUM = 1";
 			}
 			pstmt=conn.prepareStatement(query);
 			System.out.println(query);
 			if(a==0) {
 				pstmt.setInt(1, article.getArticlenum());
+			} else if (a==1) {
+				pstmt.setInt(1, a);
 			}
 			ResultSet rs = pstmt.executeQuery();
 			rs.next();
