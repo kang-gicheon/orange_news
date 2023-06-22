@@ -69,11 +69,19 @@ public class NewsController extends HttpServlet {
 
 		try {
 			List<ArticleVO> articlesList = new ArrayList<ArticleVO>();
+			List<ArticleVO> articlesHotList = new ArrayList<ArticleVO>();
+			ArticleVO headline = new ArticleVO();
 			
 			if (action == null) {
 				System.out.println("기본 화면");
 				articlesList = articleService.listArticles();
+				articlesHotList = articleService.listHot();
+				headline = articleService.headline();
+				
+				System.out.println(articlesHotList);
 				request.setAttribute("articlesList", articlesList);
+				request.setAttribute("articlesHotList", articlesHotList);
+				request.setAttribute("headline", headline);
 				nextPage = "/test/mainPage.jsp";
 
 			}

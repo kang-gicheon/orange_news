@@ -15,6 +15,7 @@ public class ArticleService {
 		articleDAO.insertNewArticle(article);
 		
 	}
+
 	
 	public ArticleVO updateAction(ArticleVO article) {
 		articleDAO.updateReact(article);
@@ -30,9 +31,9 @@ public class ArticleService {
 		
 		articleDAO.selectArticle(article);
 	}
-
-	public ArticleVO headline (ArticleVO article) {
-		articleDAO.HDLarticle();
+	
+	public ArticleVO headline () {
+		ArticleVO article = articleDAO.HDLarticle();
 		return article;
 		
 	}
@@ -41,5 +42,11 @@ public class ArticleService {
 		articleDAO.updateReccount(article);
 		return article;
 	}
+	
+	public List<ArticleVO> listHot(){
+		List<ArticleVO> articlesHotList = articleDAO.selectHotAllArticles();
+		return articlesHotList;
+	}
+	
 
 }

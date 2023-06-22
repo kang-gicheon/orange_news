@@ -86,6 +86,52 @@ public class ArticleDAO {
 		return articlesList;
 	}
 	
+	public List<ArticleVO> selectHotAllArticles(){
+		System.out.println("selectHotAllArticles 들어옴");
+		List<ArticleVO> articlesHotList = new ArrayList<ArticleVO>();
+		
+		try {
+			conn=dataFactory.getConnection();
+			String query = "SELECT title, content, articlenum, type, reccount, hotissue, img, id "+
+			" FROM ARTICLE ORDER by reccount DESC";
+			
+			pstmt = conn.prepareStatement(query);
+			ResultSet rs = pstmt.executeQuery();
+			while(rs.next()) {
+				String title = rs.getString("title");
+				String content = rs.getString("content");
+				int articleNum = rs.getInt("articlenum");
+				int type = rs.getInt("type");
+				int reccount = rs.getInt("reccount");
+				int hotissue = rs.getInt("hotissue");
+				String imageFileName = rs.getString("img");
+				String id = rs.getString("id");
+				
+				ArticleVO article = new ArticleVO();
+				article.setTitle(title);
+				article.setContent(content);
+				article.setArticlenum(articleNum);
+				article.setType(type);
+				article.setRecCount(reccount);
+				article.setHotissue(hotissue);
+				article.setImgFileName(imageFileName);
+				article.setId(id);
+				articlesHotList.add(article);
+			}
+			
+			rs.close();
+			pstmt.close();
+			conn.close();
+			
+			
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		
+		
+		return articlesHotList;
+	}
 
 	
 	public void insertNewArticle(ArticleVO article) {
