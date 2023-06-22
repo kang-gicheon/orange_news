@@ -43,7 +43,6 @@
 	}
 
 	public List<ArticleVO> HDLarticles() { //헤드라인 기사 뽑기 
-		ArticleVO article = new ArticleVO();
 		List<ArticleVO> hdlArticlesList = new ArrayList<ArticleVO>();
 		String title;
 		String imageFileName;
@@ -56,6 +55,7 @@
 		ResultSet rs = pstmt.executeQuery();
 		
 		while(rs.next()) {
+			ArticleVO article = new ArticleVO();
 			title=rs.getString("title");
 			imageFileName=rs.getString("img");
 			articlenum=rs.getInt("articlenum");
