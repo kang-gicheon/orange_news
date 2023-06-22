@@ -34,7 +34,7 @@ request.setCharacterEncoding("UTF-8");
 	<h2>헤드라인 테스트</h2>
 	<h3>헤드라인 기준 : 가장 최근 특종O 기사인것</h3>
 	<table align="center" border="2" width="80%">
-		<c:choose >
+		<c:choose>
 			<c:when test="${empty headline }">
 				<tr height="10">
 					<td colspan="4">
@@ -45,47 +45,47 @@ request.setCharacterEncoding("UTF-8");
 				</tr>
 			</c:when>
 			<c:when test="${!empty headline }">
-				
-					<tr align="center">
-						
-						<c:choose>
-							<c:when test="${headline.type==1}">
-								<td>경제/정치</td>
-							</c:when>
-							<c:when test="${headline.type==2}">
-								<td>산업</td>
-							</c:when>
-							<c:when test="${headline.type==3}">
-								<td>사회/문화</td>
-							</c:when>
-							<c:when test="${headline.type==4}">
-								<td>부동산</td>
-							</c:when>
-							<c:when test="${headline.type==5}">
-								<td>글로벌</td>
-							</c:when>
-							<c:when test="${headline.type==6}">
-								<td>블록체인</td>
-							</c:when>
-							<c:when test="${headline.type==7}">
-								<td>스포츠/연예</td>
-							</c:when>
-							<c:otherwise>
-								<td>오류</td>
-							</c:otherwise>
 
-						</c:choose>
-						<td width=5%>${headline.title }</td>
-						
-						<td width="30%"><a
-							href="${contextPath}/news/viewArticle.do?articlenum=${headline.articlenum}">
-								<img
-								src="${contextPath }/download.do?&title=${headline.title}&imgFileName=${headline.imgFileName}"
-								id="preview" style="width: 200px; height: 150px;" />
-						</a></td>
+				<tr align="center">
 
-					</tr>
-				
+					<c:choose>
+						<c:when test="${headline.type==1}">
+							<td>경제/정치</td>
+						</c:when>
+						<c:when test="${headline.type==2}">
+							<td>산업</td>
+						</c:when>
+						<c:when test="${headline.type==3}">
+							<td>사회/문화</td>
+						</c:when>
+						<c:when test="${headline.type==4}">
+							<td>부동산</td>
+						</c:when>
+						<c:when test="${headline.type==5}">
+							<td>글로벌</td>
+						</c:when>
+						<c:when test="${headline.type==6}">
+							<td>블록체인</td>
+						</c:when>
+						<c:when test="${headline.type==7}">
+							<td>스포츠/연예</td>
+						</c:when>
+						<c:otherwise>
+							<td>오류</td>
+						</c:otherwise>
+
+					</c:choose>
+					<td width=5%>${headline.title }</td>
+
+					<td width="30%"><a
+						href="${contextPath}/news/viewArticle.do?articlenum=${headline.articlenum}">
+							<img
+							src="${contextPath }/download.do?&title=${headline.title}&imgFileName=${headline.imgFileName}"
+							id="preview" style="width: 200px; height: 150px;" />
+					</a></td>
+
+				</tr>
+
 			</c:when>
 
 
@@ -94,6 +94,44 @@ request.setCharacterEncoding("UTF-8");
 
 
 	</table>
+
+	<h2>반응순 정렬</h2>
+	<h3>기준 : 반응별 가장 높은 기사 하나씩 출력 (수 조절 가능)</h3>
+
+
+	<table align="center" border="2" width="80%">
+
+		<c:choose>
+			<c:when test="${empty reactList }">
+				<tr height="10">
+					<td colspan="4">
+						<p align="center">
+							<b> <span style="font-size: 9pt;">등록된 기사가 없습니다.</span></b>
+						</p>
+					</td>
+				</tr>
+			</c:when>
+			
+			<c:when test="${!empty reactList }">
+			<c:forEach var="article" items="${reactList}"
+					varStatus="articleNum">
+					<tr align="center">
+						<td width="5%">${article.actype} - 반응 수 : ${article.rcount }</td>
+						<td width="30%"><a
+							href="${contextPath}/news/viewArticle.do?articlenum=${article.articlenum}">
+								<img
+								src="${contextPath }/download.do?&title=${article.title}&imgFileName=${article.imgFileName}"
+								id="preview" style="width: 200px; height: 150px;" />
+						</a><br> <a>${article.title} - ${article.id }</a></td>
+
+					</tr>
+				</c:forEach>
+			
+			</c:when>
+
+		</c:choose>
+	</table>
+
 
 	<h2>추천순 정렬</h2>
 	<h3>실시간 반응O</h3>
