@@ -52,7 +52,8 @@ public class ArticleService {
 		} else if(type==7) {
 			articlesMap.put("articleType7", articlesofTypeList);
 		}
-		articlesMap.put("totArticles", totArticles);
+//		articlesMap.put("totArticles", totArticles);	//a안 - 기사 글 갯수에 따라 페이징 넘버 생성
+		articlesMap.put("totArticles", 130);			//b안 - 고정된 갯수에 떄라 페이징 넘버 생성
 		return articlesMap;
 	}
 	

@@ -107,7 +107,7 @@ public class ArticleDAO {
 		try {
 			conn=dataFactory.getConnection();
 			String query="SELECT * FROM ("
-					+ "SELECT ROWNUM as recnum, title, content, articlenum,type, reccount, hotissue,img, id"
+					+ "SELECT ROWNUM as recnum, title, content, articlenum,type, reccount, hotissue,img, id "
 					+ "FROM(SELECT title, content, articlenum,type, reccount, hotissue,img, id"
 					+ " FROM article WHERE type=? ORDER by articlenum DESC)) "
 					+ "WHERE recNum between(?-1)*100+(?-1)*10+1 and (?-1)*100+?*10";

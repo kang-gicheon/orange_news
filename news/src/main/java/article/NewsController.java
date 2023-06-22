@@ -100,8 +100,8 @@ public class NewsController extends HttpServlet {
 				articlesMap.put("pageNum", pageNum);
 
 				request.setAttribute("articlesMap", articlesMap);
-				nextPage = "";
-			} else if (action.equals("/(각타입리스트링크2)")) {
+				nextPage = "/test/listArticles";	
+			} else if (action.equals("/type2List.do")) {
 				int type = 2;
 
 				String _section = request.getParameter("section");
@@ -117,7 +117,7 @@ public class NewsController extends HttpServlet {
 				articlesMap.put("pageNum", pageNum);
 
 				request.setAttribute("articlesMap", articlesMap);
-				nextPage = "";
+				nextPage = "/test/listArticles2.jsp";							//테스트용 jsp 페이지
 			} else if (action.equals("/(각타입리스트링크3)")) {
 				int type = 3;
 
@@ -391,7 +391,8 @@ public class NewsController extends HttpServlet {
 			}
 		}
 	}
-
+	
+	//안쓸 메서드일 확률이 높습니다. 참고
 	private void clearData(MemberVO memberVO) {
 		articleVO.setTitle(null);
 		articleVO.setContent(null);
