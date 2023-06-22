@@ -30,8 +30,8 @@ public class ArticleService {
 		return articlesList;
 	}
 	
-	public List<ArticleVO> listTypeArticles(ArticleVO article){
-		List<ArticleVO> articlesofTypeList = articleDAO.selectArticlesofType(article);
+	public List<ArticleVO> listTypeArticles(){
+		List<ArticleVO> articlesofTypeList = articleDAO.selectArticlesofType();
 		return articlesofTypeList;
 	}
 	
@@ -39,11 +39,9 @@ public class ArticleService {
 		articleDAO.selectArticle(article, 0);
 	}
 	
-	
-	public List<ArticleVO> displayHDLarticle() {
-		return articleDAO.HDLarticles();
+	public void displayHDLarticlesList(List<ArticleVO> hdlArticlesList) {
+		articleDAO.HDLarticles(hdlArticlesList);		
 	}
-	
 	
 	public void displayHDLarticle(ArticleVO article) {
 		articleDAO.selectArticle(article, 1);

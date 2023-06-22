@@ -33,24 +33,38 @@ request.setCharacterEncoding("UTF-8");
 	</a>
 
 
-	<!-- 헤드라인 기사 시작 -->
-	<table id="hot" align="center" border="2" width="80%">
+	<!-- 헤드라인 기사 메인 시작 -->
+	<table id="hotmain" align="center" border="1" width="80%">
+		<tr align="center">
+			<td width="30%"><a
+				href="${contextPath}/news/viewArticle.do?articlenum=${hdlmain.articlenum}">
+					<img
+					src="${contextPath }/download.do?&title=${hdlmain.title}&imgFileName=${hdlmain.imgFileName}"
+					id="preview" style="width: 200px; height: 150px;" />
+			</a><br> <a>${hdlmain.title}</a></td>
+		</tr>
+	</table>
+	<!-- 헤드라인 기사 메인 끝 -->
+
+
+	<!-- 헤드라인 기사 리스트 시작 -->
+	<table id="headlist" align="center" border="0" width="80%">
+		<tr>
+			<td><span>헤드라인 기사 리스트(첫번째 제외)</span></td>
+		</tr>
 		<c:choose>
-			<c:when test="${!empty articlesList }">
+			
+			<c:when test="${!empty headarticlesList }">
 
-				<c:forEach var="article" items="${articlesList}"
+				<c:forEach var="hArticle" items="${headarticlesList}"
 					varStatus="articleNum">
-
-
-					<c:if test="${article.hotissue == 1 }">
+					<c:if test="${!articleNum.first }">
+					
+					
 						<tr align="center">
-							<td width="5%">${articleNum.count }</td>
 							<td width="30%"><a
-								href="${contextPath}/news/viewArticle.do?articlenum=${article.articlenum}">
-									<img
-									src="${contextPath }/download.do?&title=${article.title}&imgFileName=${article.imgFileName}"
-									id="preview" style="width: 200px; height: 150px;" />
-							</a><br> <a>${article.title} - ${article.id }</a></td>
+								href="${contextPath}/news/viewArticle.do?articlenum=${hArticle.articlenum}">
+									${hArticle.title} </a></td>
 						</tr>
 					</c:if>
 
@@ -59,12 +73,15 @@ request.setCharacterEncoding("UTF-8");
 			</c:when>
 		</c:choose>
 	</table>
-	<!-- 헤드라인 기사 끝 -->
+	<!-- 헤드라인 기사 리스트 끝 -->
 
 
 
 	<!-- 인기 기사 시작 -->
 	<table align="center" border="2" width="80%">
+		<tr>
+			<td><span>인기기사리스트</span></td>
+		</tr>
 		<c:choose>
 			<c:when test="${empty hotarticlesList}">
 				<tr height="10">
@@ -100,6 +117,9 @@ request.setCharacterEncoding("UTF-8");
 
 	<!-- 메인 화면 최근 기사 시작 -->
 	<table align="center" border="2" width="80%">
+		<tr>
+			<td><span>최근기사</span></td>
+		</tr>
 		<c:choose>
 			<c:when test="${empty articlesList}">
 				<tr height="10">

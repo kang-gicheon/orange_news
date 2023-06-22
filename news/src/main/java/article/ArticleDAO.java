@@ -81,8 +81,9 @@ public class ArticleDAO {
 		return articlesList;
 	}
 	
-	public List<ArticleVO> selectArticlesofType(ArticleVO article){
+	public List<ArticleVO> selectArticlesofType(){
 		List<ArticleVO> articlesofTypeList = new ArrayList<ArticleVO>();
+		ArticleVO article = new ArticleVO();
 		try {
 			conn=dataFactory.getConnection();
 			int type = article.getType();
@@ -218,6 +219,7 @@ public class ArticleDAO {
 			String title = rs.getString("title");
 			Date writedate = rs.getDate("writedate");
 			String content = rs.getString("content");
+			int articlenum = rs.getInt("articlenum");
 			int type = rs.getInt("type");
 			int reccount = rs.getInt("reccount");
 			int hotissue = rs.getInt("hotissue");
@@ -225,13 +227,14 @@ public class ArticleDAO {
 			String id = rs.getString("id");
 			
 			article.setTitle(title);
+			article.setWritedate(writedate);
 			article.setContent(content);
+			article.setArticlenum(articlenum);
 			article.setType(type);
 			article.setRecCount(reccount);
 			article.setHotissue(hotissue);
 			article.setImgFileName(imageFileName);
 			article.setId(id);
-			article.setWritedate(writedate);
 			rs.close();
 			pstmt.close();
 			conn.close();
@@ -386,25 +389,26 @@ public class ArticleDAO {
 	}
 	
 	
-	public List<ArticleVO> HDLarticles() { //헤드라인 기사 뽑기 
-		ArticleVO article = new ArticleVO();
-		List<ArticleVO> hdlArticlesList = new ArrayList<ArticleVO>();
+	public void HDLarticles(List<ArticleVO> hdlArticlesList) { //헤드라인 기사 뽑기 
+		
 		String title;
-		String imageFileName;
 		int articlenum;
 		
 		try {
 		conn= dataFactory.getConnection();
-		String query = "SELECT title, img, articlenum FROM article WHERE hotissue=1 ORDER BY articlenum DESC";
+		String query = "SELECT title, articlenum FROM article WHERE hotissue=? ORDER BY articlenum DESC";
 		pstmt=conn.prepareStatement(query);
+		System.out.println(query);
+		pstmt.setInt(1, 1);
 		ResultSet rs = pstmt.executeQuery();
 		
 		while(rs.next()) {
+			ArticleVO article = new ArticleVO();
 			title=rs.getString("title");
-			imageFileName=rs.getString("img");
 			articlenum=rs.getInt("articlenum");
+			System.out.println("title: "+title);
+			System.out.println("articlenum: "+articlenum);
 			article.setTitle(title);
-			article.setImgFileName(imageFileName);
 			article.setArticlenum(articlenum);
 			hdlArticlesList.add(article);
 		}
@@ -415,7 +419,6 @@ public class ArticleDAO {
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
-		return hdlArticlesList;
 	}
 	
 	

@@ -41,7 +41,8 @@ public class MemberController extends HttpServlet {
 
 		//쿠키
 		Cookie[] cookies = request.getCookies(); // 클라이언트로부터 전송된 모든 쿠키 가져오기
-		Cookie loginCookie = null;
+		Cookie loginCookieId = null;
+		Cookie loginCookieRep = null;
 		
 		//로그인 값을 가진 쿠키 전송 
 		HttpSession session = request.getSession();
@@ -154,14 +155,17 @@ public class MemberController extends HttpServlet {
 				if(loginValue) {			//로그인 성공시
 					request.setAttribute("memberVO", memberVO);
 					
-					loginCookie = new Cookie("loginId", memberVO.getId());
-					loginCookie.setPath("/");
-					loginCookie.setMaxAge(60 * 60 * 24);
-					response.addCookie(loginCookie);
+					loginCookieId = new Cookie("loginId", memberVO.getId());
+					loginCookieRep = new Cookie("reporter", String.valueOf(memberVO.getReporter()));
+					loginCookieId.setPath("/");
+					loginCookieRep.setPath("/");
+					loginCookieId.setMaxAge(60 * 60 * 24);
+					loginCookieRep.setMaxAge(60 * 60 * 24);
+					response.addCookie(loginCookieId);
+					response.addCookie(loginCookieRep);
 					
 					session=request.getSession();
 					session.setAttribute("loginIdSess", memberVO.getId());
-					
 					PrintWriter pw = response.getWriter();
 					pw.write("<script>"	+ " location.href='"
 										+ request.getContextPath()
@@ -184,7 +188,7 @@ public class MemberController extends HttpServlet {
 				
 			}else if(action.equals("/logout.do")) {		//로그아웃
 				clearData(memberVO);
-				loginCookie = null;
+				loginCookieId = null;
 				deleteCookie(cookies, response);
 				
 				System.out.println("logOut confirm - id value: " + memberVO.getId());
@@ -244,7 +248,7 @@ public class MemberController extends HttpServlet {
 				memberVO.setName(name);
 				memberVO.setPnum(pnum);
 				memberVO.setEmail(email);
-				System.out.println("id:"+id + "/ new password:" + pwd);
+				System.out.println("id:"+id + " / new password:" + pwd);
 				if(memberVO.getId() == null ) {
 					PrintWriter pw = response.getWriter();
 					pw.write("<script>" + "alert('로그아웃 상태입니다.');"
