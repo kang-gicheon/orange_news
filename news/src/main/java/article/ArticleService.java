@@ -48,5 +48,9 @@ public class ArticleService {
 		return articlesHotList;
 	}
 	
+	public List<ArticleVO> listReact(){
+		List<ArticleVO> articlesList = articleDAO.selectReactArticles();
+		return articlesList;
+	}
 
 }

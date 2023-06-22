@@ -68,19 +68,24 @@ public class NewsController extends HttpServlet {
 		System.out.println("action: " + action); // 어떤 액션인지 콘솔에서 확인용 (나중에 지워짐)
 
 		try {
+			//기본화면
 			List<ArticleVO> articlesList = new ArrayList<ArticleVO>();
 			List<ArticleVO> articlesHotList = new ArrayList<ArticleVO>();
+			List<ArticleVO> ReactRankingList = new ArrayList<ArticleVO>();
 			ArticleVO headline = new ArticleVO();
+			
 			
 			if (action == null) {
 				System.out.println("기본 화면");
 				articlesList = articleService.listArticles();
 				articlesHotList = articleService.listHot();
+				ReactRankingList = articleService.listReact();
 				headline = articleService.headline();
 				
 				System.out.println(articlesHotList);
 				request.setAttribute("articlesList", articlesList);
 				request.setAttribute("articlesHotList", articlesHotList);
+				request.setAttribute("reactList", ReactRankingList);
 				request.setAttribute("headline", headline);
 				nextPage = "/test/mainPage.jsp";
 
