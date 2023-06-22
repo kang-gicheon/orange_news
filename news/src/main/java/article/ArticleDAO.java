@@ -14,6 +14,7 @@ import javax.sql.DataSource;
 
 public class ArticleDAO {
 	private PreparedStatement pstmt;
+	private PreparedStatement pstmt0;
 	private PreparedStatement pstmt1;
 	private PreparedStatement pstmt2;
 	private PreparedStatement pstmt3;
@@ -23,6 +24,8 @@ public class ArticleDAO {
 	private Connection conn;
 	private Connection conn2;
 	private DataSource dataFactory;
+	
+	private int rcount=0;
 	
 	public ArticleDAO() {	//ArticleDAO 객체 생성(DB연결)
 		try {
@@ -151,6 +154,203 @@ public class ArticleDAO {
 		}
 		return articlesofTypeList;
 	}
+	
+	
+	public List<ArticleVO> selectReactArticles() {
+		System.out.println("selectReactArticles 메소드 들어옴");
+		List<ArticleVO> articlesList = new ArrayList<ArticleVO>();
+
+		try {
+			conn = dataFactory.getConnection();
+
+			String query = "SELECT articlenum, rcount FROM REACT WHERE r_type=? "
+					+ "and rcount = (SELECT max(rcount) FROM REACT WHERE r_type=?) ";
+			String query2 = "SELECT title, id, img FROM ARTICLE WHERE articlenum=?";
+
+			pstmt = conn.prepareStatement(query);
+			pstmt.setString(1, "좋아요");
+			pstmt.setString(2, "좋아요");
+			pstmt2 = conn.prepareStatement(query);
+			pstmt2.setString(1, "훈훈해요");
+			pstmt2.setString(2, "훈훈해요");
+			pstmt3 = conn.prepareStatement(query);
+			pstmt3.setString(1, "슬퍼요");
+			pstmt3.setString(2, "슬퍼요");
+			pstmt4 = conn.prepareStatement(query);
+			pstmt4.setString(1, "화나요");
+			pstmt4.setString(2, "화나요");
+			pstmt5 = conn.prepareStatement(query);
+			pstmt5.setString(1, "후속기사원해요");
+			pstmt5.setString(2, "후속기사원해요");
+
+			ResultSet rs = pstmt.executeQuery();
+			ResultSet rs2 = pstmt2.executeQuery();
+			ResultSet rs3 = pstmt3.executeQuery();
+			ResultSet rs4 = pstmt4.executeQuery();
+			ResultSet rs5 = pstmt5.executeQuery();
+
+			if (rs.next()) { // 좋아요
+				int articlenum = rs.getInt("articlenum");
+				rcount = rs.getInt("rcount");
+				rs.close();
+
+				ArticleVO article = new ArticleVO();
+			
+				
+
+				pstmt0 = conn.prepareStatement(query2);
+				pstmt0.setInt(1, articlenum);
+
+				ResultSet rs0 = pstmt0.executeQuery();
+				rs0.next();
+				String title = rs0.getString("title");
+				String id = rs0.getString("id");
+				String img = rs0.getString("img");
+				
+				article.setArticlenum(articlenum);
+				article.setRcount(rcount);
+				article.setActype("좋아요");
+				article.setTitle(title);
+				article.setId(id);
+				article.setImgFileName(img);
+				articlesList.add(article);
+				System.out.println("1"+articlesList);
+				rs0.close();
+
+			}
+
+			if (rs2.next()) { // 훈훈해요
+				int articlenum = rs2.getInt("articlenum");
+				rcount = rs2.getInt("rcount");
+				rs2.close();
+
+				ArticleVO article2 = new ArticleVO();
+				
+				
+				pstmt0 = conn.prepareStatement(query2);
+				pstmt0.setInt(1, articlenum);
+
+				ResultSet rs0 = pstmt0.executeQuery();
+				rs0.next();
+				String title = rs0.getString("title");
+				String id = rs0.getString("id");
+				String img = rs0.getString("img");
+				
+				article2.setArticlenum(articlenum);
+				article2.setRcount(rcount);
+				article2.setActype("훈훈해요");
+				article2.setTitle(title);
+				article2.setId(id);
+				article2.setImgFileName(img);
+				
+				
+				articlesList.add(article2);
+				System.out.println("2"+articlesList);
+				rs0.close();
+			}
+
+			if (rs3.next()) {// 슬퍼요
+				int articlenum = rs3.getInt("articlenum");
+				rcount = rs3.getInt("rcount");
+				rs3.close();
+
+				ArticleVO article3 = new ArticleVO();
+				
+				pstmt0 = conn.prepareStatement(query2);
+				pstmt0.setInt(1, articlenum);
+
+				ResultSet rs0 = pstmt0.executeQuery();
+				rs0.next();
+				String title = rs0.getString("title");
+				String id = rs0.getString("id");
+				String img = rs0.getString("img");
+				
+				article3.setTitle(title);
+				article3.setId(id);
+				article3.setImgFileName(img);
+				
+				article3.setActype("슬퍼요");
+				article3.setArticlenum(articlenum);
+				article3.setRcount(rcount);
+				articlesList.add(article3);
+				System.out.println("3"+articlesList);
+				rs0.close();
+			}
+
+			if (rs4.next()) { // 화나요
+				int articlenum = rs4.getInt("articlenum");
+				rcount = rs4.getInt("rcount");
+				rs4.close();
+
+				ArticleVO article4 = new ArticleVO();
+				
+				
+				pstmt0 = conn.prepareStatement(query2);
+				pstmt0.setInt(1, articlenum);
+
+				ResultSet rs0 = pstmt0.executeQuery();
+				rs0.next();
+				String title = rs0.getString("title");
+				String id = rs0.getString("id");
+				String img = rs0.getString("img");
+				
+				
+				article4.setActype("화나요");
+				article4.setTitle(title);
+				article4.setId(id);
+				article4.setImgFileName(img);
+				article4.setArticlenum(articlenum);
+				article4.setRcount(rcount);
+				articlesList.add(article4);
+				System.out.println("4"+articlesList);
+				rs0.close();
+			}
+
+			if (rs5.next()) { // 후속기사원해요
+				int articlenum = rs5.getInt("articlenum");
+				rcount = rs5.getInt("rcount");
+				rs5.close();
+
+				ArticleVO article5 = new ArticleVO();
+				
+				
+				pstmt0 = conn.prepareStatement(query2);
+				pstmt0.setInt(1, articlenum);
+
+				ResultSet rs0 = pstmt0.executeQuery();
+				rs0.next();
+				String title = rs0.getString("title");
+				String id = rs0.getString("id");
+				String img = rs0.getString("img");
+				
+				
+				article5.setActype("후속기사원해요");
+				article5.setTitle(title);
+				article5.setId(id);
+				article5.setImgFileName(img);
+				article5.setArticlenum(articlenum);
+				article5.setRcount(rcount);
+				articlesList.add(article5);
+				System.out.println("5"+articlesList);
+				rs0.close();
+
+			}
+
+			pstmt.close();
+			pstmt2.close();
+			pstmt3.close();
+			pstmt4.close();
+			pstmt5.close();
+			conn.close();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		System.out.println("반응" + articlesList);
+		return articlesList;
+	}
+	
 	
 	public void insertNewArticle(ArticleVO article) {
 		
@@ -321,7 +521,7 @@ public class ArticleDAO {
 			ResultSet rs  = pstmt.executeQuery();
 			rs.next();
 			String r_type = rs.getString("r_type");
-			int rcount = rs.getInt("rcount");
+			rcount = rs.getInt("rcount");
 			
 			article.setActype(r_type);
 			article.setRcount(rcount);
@@ -341,7 +541,6 @@ public class ArticleDAO {
 	public ArticleVO updateReact (ArticleVO article) {
 		String r_type = article.getActype();
 		int articlenum =article.getArticlenum();
-		int rcount = 0;
 			
 		try {
 			conn = dataFactory.getConnection();

@@ -111,7 +111,7 @@ request.setCharacterEncoding("UTF-8");
 				<td><input type="radio" name="react" value="훈훈해요"></input></td>
 				<td><input type="radio" name="react" value="슬퍼요"></input></td>
 				<td><input type="radio" name="react" value="화나요"></input></td>
-				<td><input type="radio" name="react" value="후속기사 원해요"></input></td>
+				<td><input type="radio" name="react" value="후속기사원해요"></input></td>
 
 			</tr>
 			<tr>

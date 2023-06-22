@@ -66,12 +66,13 @@ public class NewsController extends HttpServlet {
 		System.out.println("action: " + action); // 어떤 액션인지 콘솔에서 확인용 (나중에 지워짐)
 
 		try {
-
 			ArticleVO headarticle = new ArticleVO();
+			List<ArticleVO> articlesList = new ArrayList<ArticleVO>();
+			List<ArticleVO> hotarticlesList = new ArrayList<ArticleVO>();
+			List<ArticleVO> hdlArticlesList = new ArrayList<ArticleVO>();
+			List<ArticleVO> ReactRankingList = new ArrayList<ArticleVO>();
+			
 			if (action == null) {
-				List<ArticleVO> articlesList = new ArrayList<ArticleVO>();
-				List<ArticleVO> hotarticlesList = new ArrayList<ArticleVO>();
-				List<ArticleVO> hdlArticlesList = new ArrayList<ArticleVO>();
 
 				System.out.println("기본 화면");
 				articlesList = articleService.listArticles(0); // 0: 기사 번호에 따라 정렬 / 1: 추천 수에 따라 정렬
@@ -83,6 +84,8 @@ public class NewsController extends HttpServlet {
 				articleService.displayHDLarticle(headarticle);
 				System.out.println("헤드라인 기사 번호: " + headarticle.getArticlenum());
 				request.setAttribute("hdlmain", headarticle);
+				ReactRankingList = articleService.listReact();
+				request.setAttribute("reactList", ReactRankingList);
 				nextPage = "/test/mainPage.jsp";
 			} else if (action.equals("/(각타입리스트링크1)")) {
 				int type = 1;

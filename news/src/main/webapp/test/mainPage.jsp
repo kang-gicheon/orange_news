@@ -53,14 +53,14 @@ request.setCharacterEncoding("UTF-8");
 			<td><span>헤드라인 기사 리스트(첫번째 제외)</span></td>
 		</tr>
 		<c:choose>
-			
+
 			<c:when test="${!empty headarticlesList }">
 
 				<c:forEach var="hArticle" items="${headarticlesList}"
 					varStatus="articleNum">
 					<c:if test="${!articleNum.first }">
-					
-					
+
+
 						<tr align="center">
 							<td width="30%"><a
 								href="${contextPath}/news/viewArticle.do?articlenum=${hArticle.articlenum}">
@@ -94,8 +94,9 @@ request.setCharacterEncoding("UTF-8");
 			<c:when test="${!empty hotarticlesList }">
 				<c:forEach var="article" items="${hotarticlesList}"
 					varStatus="articleNum">
-					<c:if test="${article.hotissue == 0 }">
+
 						<tr align="center">
+							<td width="5%">추천 수 : ${article.recCount }</td>
 							<td width="30%"><a
 								href="${contextPath}/news/viewArticle.do?articlenum=${article.articlenum}">
 									<img
@@ -103,7 +104,7 @@ request.setCharacterEncoding("UTF-8");
 									id="preview" style="width: 200px; height: 150px;" />
 							</a><br> <a>${article.title} - ${article.id }</a></td>
 						</tr>
-					</c:if>
+
 				</c:forEach>
 			</c:when>
 		</c:choose>
@@ -147,6 +148,58 @@ request.setCharacterEncoding("UTF-8");
 		</c:choose>
 	</table>
 	<!-- 메인 화면 최근 기사 끝 -->
+
+
+
+
+
+
+
+
+
+	<!-- 반응 시작 -->
+	<h2>반응순 정렬</h2>
+	<h3>기준 : 반응별 가장 높은 기사 하나씩 출력 (수 조절 가능)</h3>
+
+
+	<table align="center" border="2" width="80%">
+
+		<c:choose>
+			<c:when test="${empty reactList }">
+				<tr height="10">
+					<td colspan="4">
+						<p align="center">
+							<b> <span style="font-size: 9pt;">등록된 기사가 없습니다.</span></b>
+						</p>
+					</td>
+				</tr>
+			</c:when>
+
+			<c:when test="${!empty reactList }">
+				<c:forEach var="article" items="${reactList}" varStatus="articleNum">
+					<tr align="center">
+						<td width="5%">${article.actype}-반응 수 : ${article.rcount }</td>
+						<td width="30%"><a
+							href="${contextPath}/news/viewArticle.do?articlenum=${article.articlenum}">
+								<img
+								src="${contextPath }/download.do?&title=${article.title}&imgFileName=${article.imgFileName}"
+								id="preview" style="width: 200px; height: 150px;" />
+						</a><br> <a>${article.title} - ${article.id }</a></td>
+
+					</tr>
+				</c:forEach>
+
+			</c:when>
+
+		</c:choose>
+	</table>
+	<!-- 반응 끝 -->
+
+
+
+
+
+
 
 </body>
 </html>

@@ -68,4 +68,9 @@ public class ArticleService {
 	public void displayHDLarticle(ArticleVO article) {
 		articleDAO.selectArticle(article, 1);
 	}
+	
+	public List<ArticleVO> listReact(){
+		List<ArticleVO> articlesList = articleDAO.selectReactArticles();
+		return articlesList;
+	}
 }
