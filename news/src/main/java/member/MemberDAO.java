@@ -23,7 +23,7 @@ public class MemberDAO {
 		}
 	}
 	
-	public boolean join(MemberVO memberVO) {			//회원 가입 메서드
+	public boolean insertMember(MemberVO memberVO) {			//회원 가입 메서드
 		try {
 			conn=dataFactory.getConnection();
 			String id = memberVO.getId();
@@ -56,18 +56,23 @@ public class MemberDAO {
 		return true;
 	}
 	
-	public boolean login(MemberVO memberVO) {			//로그인 메서드. 로그인 성공:1 실페:0
+	public boolean selectMember(MemberVO memberVO, int a) {		//로그인[a==1], 회원조회[a==0] 메서드
 		try {
 			conn=dataFactory.getConnection();
 			String id = memberVO.getId();
 			String pwd = memberVO.getPwd();
 			System.out.println("id: " + id);
 			System.out.println("pwd: " + pwd);
-			String query = "SELECT id, name, rep, pnum, email FROM member WHERE id=? AND pwd=?";
+			String query = "SELECT id, name, rep, pnum, email FROM member WHERE id=?";
+			if(a==1) {
+				query += " AND pwd=?";
+			}
 			System.out.println(query);
 			pstmt=conn.prepareStatement(query);
 			pstmt.setString(1, id);
-			pstmt.setString(2, pwd);
+			if(a==1) {
+				pstmt.setString(2, pwd);
+			}
 			ResultSet rs = pstmt.executeQuery();
 			rs.next();
 			id=rs.getString("id");
@@ -92,42 +97,7 @@ public class MemberDAO {
 		return true;
 	}
 	
-	public void getMemberInfo(MemberVO memberVO) {			//로그인 메서드. 로그인 성공:1 실페:0
-		String id;
-		String name;
-		int rep;
-		String pnum;
-		String email;
-		try {
-			conn=dataFactory.getConnection();
-			id = memberVO.getId();
-			System.out.println("id: " + id);
-			String query = "SELECT id, name, rep, pnum, email FROM member WHERE id=?";
-			System.out.println(query);
-			pstmt=conn.prepareStatement(query);
-			pstmt.setString(1, id);
-			ResultSet rs = pstmt.executeQuery();
-			rs.next();
-			id=rs.getString("id");
-			name=rs.getString("name");
-			rep=rs.getInt("rep");
-			pnum=rs.getString("pnum");
-			email=rs.getString("email");
-			memberVO.setId(id);
-			memberVO.setName(name);
-			memberVO.setReporter(rep);
-			memberVO.setPnum(pnum);
-			memberVO.setEmail(email);
-			
-			rs.close();
-			pstmt.close();
-			conn.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-	
-	public void editInfo(MemberVO memberVO) {				//회원 정보 수정 메서드
+	public void updateMember(MemberVO memberVO) {				//회원 정보 수정 메서드
 		try {
 			conn=dataFactory.getConnection();
 			String query= "UPDATE member SET name=?, pwd=?, pnum=?, email=?"
@@ -152,7 +122,7 @@ public class MemberDAO {
 		}
 	}
 	
-	public boolean findId(MemberVO memberVO) {
+	public boolean selectId(MemberVO memberVO) {
 		try {
 			conn=dataFactory.getConnection();
 			String query = "SELECT id FROM member WHERE name=? AND pnum=?";
@@ -176,7 +146,7 @@ public class MemberDAO {
 		return true;
 	}
 	
-	public boolean findPwd(MemberVO memberVO) {
+	public boolean selectPwd(MemberVO memberVO) {
 		try {
 			conn=dataFactory.getConnection();
 			String query = "SELECT pwd FROM member WHERE id=? AND pnum=?";
@@ -200,7 +170,7 @@ public class MemberDAO {
 		return true;
 	}
 	
-	public void withdraw(String id) {				//회원 탈퇴 메서드(로그인 값을 매개변수)
+	public void deleteMember(String id) {				//회원 탈퇴 메서드(로그인 값을 매개변수)
 		try {
 			conn=dataFactory.getConnection();
 			String query= "DELETE FROM member WHERE id=?";
@@ -212,8 +182,6 @@ public class MemberDAO {
 			conn.close();
 		} catch (Exception e) {
 			e.printStackTrace();
-		} finally {
-			id=null;
 		}
 	}
 }
