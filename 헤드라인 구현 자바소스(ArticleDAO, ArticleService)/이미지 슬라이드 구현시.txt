@@ -1,0 +1,45 @@
+	public List<ArticleVO> HDLarticles() { //헤드라인 기사 뽑기 
+		List<ArticleVO> hdlArticlesList = new ArrayList<ArticleVO>();
+		String title;
+		String imageFileName;
+		int articlenum;
+		
+		try {
+		conn= dataFactory.getConnection();
+		String query = "SELECT title, img, articlenum FROM ARTICLE where hotissue=1 ORDER BY articlenum DESC";
+		pstmt=conn.prepareStatement(query);
+		ResultSet rs = pstmt.executeQuery();
+		
+		while(rs.next()) {
+			ArticleVO article = new ArticleVO();
+			title=rs.getString("title");
+			imageFileName=rs.getString("img");
+			articlenum=rs.getInt("articlenum");
+			article.setTitle(title);
+			article.setImgFileName(imageFileName);
+			article.setArticlenum(articlenum);
+			hdlArticlesList.add(article);
+		}
+		
+		rs.close();
+		pstmt.close();
+		conn.close();
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		return hdlArticlesList;
+	}
+
+
+
+
+
+
+
+	public void viewArticle(ArticleVO article) {
+		articleDAO.selectArticle(article);
+	}
+
+	public List<ArticleVO> displayHDLarticle() {
+		return articleDAO.HDLarticles();
+	}

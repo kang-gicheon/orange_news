@@ -1,0 +1,105 @@
+	public ArticleVO selectArticle(ArticleVO article, int a) {
+		//a==0 기사 선택 / a==1 헤드라인 기사 전시
+		
+		try {
+			conn=dataFactory.getConnection();
+			String query ="SELECT * FROM (SELECT title, writedate, content, articlenum, type, reccount, hotissue, img, id from ARTICLE";	
+			if(a==0) {
+				query += " WHERE articlenum=?)";
+			} else if(a==1) {
+				query += " ORDER BY articlenum DESC) WHERE ROWNUM = 1";
+			}
+			pstmt=conn.prepareStatement(query);
+			System.out.println(query);
+			if(a==0) {
+				pstmt.setInt(1, article.getArticlenum());
+			}
+			ResultSet rs = pstmt.executeQuery();
+			rs.next();
+			String title = rs.getString("title");
+			Date writedate = rs.getDate("writedate");
+			String content = rs.getString("content");
+			int type = rs.getInt("type");
+			int reccount = rs.getInt("reccount");
+			int hotissue = rs.getInt("hotissue");
+			String imageFileName = rs.getString("img");
+			String id = rs.getString("id");
+			
+			article.setTitle(title);
+			article.setContent(content);
+			article.setType(type);
+			article.setRecCount(reccount);
+			article.setHotissue(hotissue);
+			article.setImgFileName(imageFileName);
+			article.setId(id);
+			article.setWritedate(writedate);
+			rs.close();
+			pstmt.close();
+			conn.close();
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		return article;
+	}
+
+	public List<ArticleVO> HDLarticles() { //헤드라인 기사 뽑기 
+		List<ArticleVO> hdlArticlesList = new ArrayList<ArticleVO>();
+		String title;
+		String imageFileName;
+		int articlenum;
+		
+		try {
+		conn= dataFactory.getConnection();
+		String query = "SELECT title, img, articlenum FROM article WHERE hotissue=1 ORDER BY articlenum DESC";
+		pstmt=conn.prepareStatement(query);
+		ResultSet rs = pstmt.executeQuery();
+		
+		while(rs.next()) {
+			ArticleVO article = new ArticleVO();
+			title=rs.getString("title");
+			imageFileName=rs.getString("img");
+			articlenum=rs.getInt("articlenum");
+			article.setTitle(title);
+			article.setImgFileName(imageFileName);
+			article.setArticlenum(articlenum);
+			hdlArticlesList.add(article);
+		}
+		
+		rs.close();
+		pstmt.close();
+		conn.close();
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		return hdlArticlesList;
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+	public void viewArticle(ArticleVO article) {
+		
+		articleDAO.selectArticle(article, 0);
+	}
+
+
+	public void displayHDLarticle(ArticleVO article) {
+		articleDAO.selectArticle(article, 1);
+	}
+
+---------------------------------------------------------------------------------------------
+
+<c:forEach items="${yourList}" var="item" varStatus="status">
+    <c:if test="${!status.first}">
+        <!-- 첫 번째 인덱스를 제외한 내용을 여기에 작성 -->
+        ${item}
+    </c:if>
+</c:forEach>

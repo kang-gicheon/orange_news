@@ -8,10 +8,10 @@
 <form action ="${contextPath }/twc/getco.do?mapName=${name}" method = 'post'>
 	<svg xmlns="http://www.w3.org/2000/svg"
 		xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1"
-		x="0px" y="0px" width="362px" height="480px" viewBox="0 0 400 530"
+		x="0px" y="0px" width="450px" height="630px" viewBox="0 0 400 530"
 		enable-background="new 0 0 362 480" xml:space="preserve">
 	
-	
+	<!-- width 340 지도 높이 480 -->
 	
             <!--서울 main_map_city1 //-->
             <g id="map_city1" name="서울특별시">

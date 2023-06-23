@@ -15,10 +15,7 @@ public class ArticleService {
 		articleDAO.insertNewArticle(article);
 		
 	}
-	
-	public void addReact(ArticleVO article) {
-		articleDAO.firstAddReact(article);
-	}
+
 	
 	public ArticleVO updateAction(ArticleVO article) {
 		articleDAO.updateReact(article);
@@ -33,6 +30,27 @@ public class ArticleService {
 	public void viewArticle(ArticleVO article) {
 		
 		articleDAO.selectArticle(article);
+	}
+	
+	public ArticleVO headline () {
+		ArticleVO article = articleDAO.HDLarticle();
+		return article;
+		
+	}
+	
+	public ArticleVO updateReccount(ArticleVO article) {
+		articleDAO.updateReccount(article);
+		return article;
+	}
+	
+	public List<ArticleVO> listHot(){
+		List<ArticleVO> articlesHotList = articleDAO.selectHotAllArticles();
+		return articlesHotList;
+	}
+	
+	public List<ArticleVO> listReact(){
+		List<ArticleVO> articlesList = articleDAO.selectReactArticles();
+		return articlesList;
 	}
 
 }
