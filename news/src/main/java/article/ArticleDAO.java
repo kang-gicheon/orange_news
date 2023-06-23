@@ -40,7 +40,7 @@ public class ArticleDAO {
 	public int selectTotArticles(int type) {	//type 값 기사들의 총 갯수를 산출하는 메서드
 		try {
 			conn=dataFactory.getConnection();
-			String query="SELECT COUNT(articlenum) FROM member WHERE type=?";
+			String query="SELECT COUNT(articlenum) FROM article WHERE type=?";
 			pstmt=conn.prepareStatement(query);
 			pstmt.setInt(1, type);
 			ResultSet rs = pstmt.executeQuery();
