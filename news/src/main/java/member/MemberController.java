@@ -19,12 +19,10 @@ import javax.servlet.http.HttpSession;
 @WebServlet("/member/*")
 public class MemberController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	MemberDAO memberDAO;
 	MemberService memberService;
 	
 	@Override
 	public void init(ServletConfig config) throws ServletException {
-		memberDAO = new MemberDAO();
 		memberService = new MemberService();
 	}
 
@@ -44,7 +42,7 @@ public class MemberController extends HttpServlet {
 		//쿠키와 세션
 		Cookie[] cookies = request.getCookies(); // 클라이언트로부터 전송된 모든 쿠키 가져오기
 		Cookie loginCookieId = null;		//로그인 값을 저장하는 Cookie 변수
-		Cookie loginCookieRep = null;		//member 레코드(계정)의 rep 컬럼값(기자/일반 계정 판별)을 저장하는 Cookie 변수
+		Cookie loginCookieRep = null;		//member 레코드(계정)의 rep 컬럼값(일반[0]/기자[1] 계정 판별)을 저장하는 Cookie 변수
 		HttpSession session = request.getSession();	//세션
 		
 		request.setCharacterEncoding("utf-8");	//request 인코딩
@@ -53,9 +51,9 @@ public class MemberController extends HttpServlet {
 		System.out.println("action: " + action);
 		
 		
-		/* 주의: ;;.jsp;;이 입력된 주석은 해당 jsp페이지에서 요청되었음을 표시 */
+		/* 주의: ;;.jsp;;이 입력된 주석은 해당 action값이 해당 jsp페이지의 요청에 의해 부여되었음 표시 */
 		try {
-			if(action==null) {			//개인 계정 페이지 (/mypage.do로 이동)
+			if(action==null) {			//action> 개인 계정 페이지 (/mypage.do로 이동)
 				PrintWriter pw = response.getWriter();		//script문을 response하여 웹에서 실행
 				pw.print("<script>"	+ " location.href='"
 									+ request.getContextPath()
@@ -63,8 +61,8 @@ public class MemberController extends HttpServlet {
 									+ "';"
 									+ "</script>");
 				return;
-			}else if(action.equals("/mypage.do")) {			//개인 계정 페이지 ;;/test/mainPage.jsp;;
-				manageCookieId(cookies, memberVO);	//로그인 확인
+			}else if(action.equals("/mypage.do")) {		//action> 개인 계정 페이지 ;;/test/mainPage.jsp;;
+				manageCookieId(cookies, memberVO);	//쿠키로 구운 로그인 값 확인
 				if(memberVO.getId() == null) {		//로그아웃 상태일 시 실행되는 조건문
 					PrintWriter pw = response.getWriter();
 					pw.print("<script>" + " alert('로그인 화면으로 이동합니다');"	//로그아웃 상태이므로 로그인 화면으로 넘어간다는 것을 알려주는 알림창
@@ -75,11 +73,11 @@ public class MemberController extends HttpServlet {
 										+ "</script>");
 					return;
 				}
-				memberDAO.getMemberInfo(memberVO);	//로그인 된 계정의 정보를 불러옴
+				memberService.getMemberInfo(memberVO);	//로그인 된 계정의 정보를 불러옴
 				request.setAttribute("memberVO", memberVO);		//request에 불러온 계정 데이터 입력
 				nextPage="/myPage/myPage.jsp";
-			}else if(action.equals("/join.do")) {		//회원가입 페이지
-				manageCookieId(cookies, memberVO);	//로그인 확인
+			}else if(action.equals("/join.do")) {		//action> 회원가입 페이지	;;/sign_in/sign_in.jsp;;
+				manageCookieId(cookies, memberVO);	//쿠키로 구운 로그인 값 확인
 				if(memberVO.getId() != null ) {		//로그인 상태일 경우 실행되는 조건문
 					PrintWriter pw = response.getWriter();
 					pw.write("<script>" + "alert('로그인 중 입니다.');"	//로그인 상태를 알리는 알림창
@@ -91,13 +89,13 @@ public class MemberController extends HttpServlet {
 					return;
 				}
 				nextPage="/sign_in/join.jsp";	//회원가입 페이지로 이동
-			}else if(action.equals("/joining.do")) {		//회원가입 절차 진행		;;/sign_in/join.jsp;;
-				String id=request.getParameter("id");		//jsp페이지에서 보낸 id 속성의 데이터
-				String pwd=request.getParameter("pwd");		//jsp페이지에서 보낸 pwd 속성의 데이터
-				String name=request.getParameter("name");	//jsp페이지에서 보낸 name 속성의 데이터
-				int rep=0;		//rep컬럼 값 부여 = 회원가입시 일반 계정이 디폴트
-				String pnum=request.getParameter("pnum");	//jsp페이지에서 보낸 pnum 속성의 데이터
-				String email=request.getParameter("email");	//jsp페이지에서 보낸 pnum 속성의 데이터
+			}else if(action.equals("/joining.do")) {		//action> 회원가입 절차 진행		;;/sign_in/join.jsp;;
+				String id=request.getParameter("id");		//jsp페이지에서 보낸 name=id의 데이터
+				String pwd=request.getParameter("pwd");		//jsp페이지에서 보낸 name=pwd의 데이터
+				String name=request.getParameter("name");	//jsp페이지에서 보낸 name=name의 데이터
+				int rep=0;		//rep컬럼 값 부여 = 회원가입시 일반[0] 계정이 디폴트
+				String pnum=request.getParameter("pnum");	//jsp페이지에서 보낸 name=pnum의 데이터
+				String email=request.getParameter("email");	//jsp페이지에서 보낸 name=pnum의 데이터
 				System.out.println("아이디: "+id);
 				System.out.println("비밀번호: "+pwd);
 				System.out.println("이름: "+ name);
@@ -111,7 +109,7 @@ public class MemberController extends HttpServlet {
 				memberVO.setPnum(pnum);		//pnum 값 부여
 				memberVO.setEmail(email);	//email 값 부여
 				
-				boolean isjoined = memberDAO.join(memberVO);	//회원가입 실행하여 그 값을 isjoined에 부여
+				boolean isjoined = memberService.join(memberVO);	//회원가입 실행하여 그 값을 isjoined에 부여
 				
 				//값이 false인 경우
 				if(!isjoined) {
@@ -135,7 +133,7 @@ public class MemberController extends HttpServlet {
 									+ "</script>");
 				return;
 				
-			}else if(action.equals("/loginForm.do")) {		//로그인 입력 페이지
+			}else if(action.equals("/loginForm.do")) {		//action> 로그인 입력 페이지		;;/test/mainPage.jsp;;
 				clearData(memberVO);
 				manageCookieId(cookies, memberVO);	//쿠키로 구운 로그인 값 확인
 				System.out.println("로그인 중인 아이디: " + memberVO.getId());
@@ -150,88 +148,88 @@ public class MemberController extends HttpServlet {
 					return;
 				}
 				nextPage="/sign_in/sign_in.jsp";	//로그인 페이지로 이동
-			}else if(action.equals("/login.do")) {		//로그인 데이터 받기
-				String id=request.getParameter("id");
-				String pwd=request.getParameter("pwd");
+			}else if(action.equals("/login.do")) {		//action> 로그인 데이터 받기		;;/test/mainPage.jsp;;
+				String id=request.getParameter("id");	//jsp페이지에서 보낸 name=id의 데이터
+				String pwd=request.getParameter("pwd");	//jsp페이지에서 보낸 name=pwd의 데이터
 				
-				memberVO.setId(id);
-				memberVO.setPwd(pwd);
-				boolean loginValue=memberDAO.login(memberVO);
-				System.out.println("로그인 값: " + loginValue);
+				memberVO.setId(id);		//id값 부여
+				memberVO.setPwd(pwd);	//pwd값 부여 - 비밀번호
+				boolean loginValue=memberService.login(memberVO);	//로그인 시도와 그 결과값을 loginValue 변수에 부여
+				System.out.println("로그인 값: " + loginValue);	
 				
-				if(loginValue) {			//로그인 성공시
-					request.setAttribute("memberVO", memberVO);
-					
-					loginCookieId = new Cookie("loginId", memberVO.getId());
-					loginCookieRep = new Cookie("reporter", String.valueOf(memberVO.getReporter()));
-					loginCookieId.setPath("/");
-					loginCookieRep.setPath("/");
-					loginCookieId.setMaxAge(60 * 60 * 24);
+				if(loginValue) {			//로그인 성공시 (loginValue==true)
+					String _id=memberVO.getId();	//쿠키값 전송을 위한 _id
+					String _rep=String.valueOf(memberVO.getReporter());		//쿠키값 전송을 위한 _rep #쿠키는 오로지 문자열만 받으므로 String으로 파싱
+					loginCookieId = new Cookie("loginId", _id);		//loginCookieId(아이디 쿠키) 값 부여 {key: loginId, value: (_id 값)}
+					loginCookieRep = new Cookie("reporter", _rep);	//loginCookieRep(일반[0]/기자[1] 계정 쿠키) 값 부여 {key: reporter, value: (_rep 값)}
+					loginCookieId.setPath("/");		//아이디 쿠키를 저장할 path 설정(접속포트의 모든 url에 공유)
+					loginCookieRep.setPath("/");	//계정 쿠키를 저장할 path 설정(접속포트의 모든 url에 공유)
+					loginCookieId.setMaxAge(60 * 60 * 24);	//쿠키 유지 시간 설정
 					loginCookieRep.setMaxAge(60 * 60 * 24);
-					response.addCookie(loginCookieId);
-					response.addCookie(loginCookieRep);
+					response.addCookie(loginCookieId);		//아이디 쿠키 굽기
+					response.addCookie(loginCookieRep);		//계정 쿠키 쿠키
 					
-					session=request.getSession();
-					session.setAttribute("loginIdSess", memberVO.getId());
+					session=request.getSession();	//세션 객체 생성
+					session.setAttribute("loginIdSess", _id);	//key가 loginIdSess이고 value가 _id 값인 세션 생성, 적용
 					PrintWriter pw = response.getWriter();
 					pw.write("<script>"	+ " location.href='"
 										+ request.getContextPath()
-										+ "/news/mainpage.do"
+										+ "/news/mainpage.do"	//dispatch 방식이 아닌 페이지 연결을 위한 스크립트문 실행
 										+ "';"
 										+ "</script>");
 					return;
 				}
-				else {						//로그인 실패시
+				else {						//로그인 실패시(loginValue==false)
 					clearData(memberVO);
 					PrintWriter pw = response.getWriter();
-					pw.print("<script>" + "alert('로그인에 실패하였습니다');"
+					pw.print("<script>" + "alert('로그인에 실패하였습니다');"	//로그인 실패 알림창 보내기
 										+ " location.href='"
 										+ request.getContextPath()
-										+ "/member/loginForm.do"
+										+ "/member/loginForm.do"	//로그인 페이지로 이동
 										+ "';"
 										+ "</script>");
 					return;
 				}
 				
-			}else if(action.equals("/logout.do")) {		//로그아웃
+			}else if(action.equals("/logout.do")) {		//action> 로그아웃		;;/test/mainPage.jsp;;, ;;/myPage/myPage.jsp;;
 				clearData(memberVO);
+				deleteCookie(cookies, response);		//쿠키 삭제 메서드 실행
 				loginCookieId = null;
-				deleteCookie(cookies, response);
-				
 				System.out.println("logOut confirm - id value: " + memberVO.getId());
 				
-				session.removeAttribute("loginIdSess");
+				session.removeAttribute("loginIdSess");	//세션에 있는 로그인 값 삭제
 				PrintWriter pw = response.getWriter();
-				pw.print("<script>" + " alert('로그아웃 되었습니다.');"
+				pw.print("<script>" + " alert('로그아웃 되었습니다.');"	//로그아웃을 알리는 알림창
 									+ " location.href='"
 									+ request.getContextPath()
-									+ "/news"
+									+ "/news"					//메인 페이지로 이동
 									+ "';"
 									+ "</script>");
 				return;
-			}else if(action.equals("/modmember.do")) {		//회원수정 페이지로 이동
+			}else if(action.equals("/modmember.do")) {		// 회원정보 수정을 위한 계정 정보 확인	;;/myPage/myPage.jsp;;
 				clearData(memberVO);
-				manageCookieId(cookies, memberVO);
-				System.out.println("로그인 중인 아이디: "+memberVO.getId());
-				if(memberVO.getId() == null ) {
+				manageCookieId(cookies, memberVO);		//쿠키로 구운 로그인 값 확인
+				String id=memberVO.getId();			//manageCookieId() 메서드로 얻은 값 id에 부여
+				System.out.println("로그인 중인 아이디: "+ id);
+				if(id == null ) {		//로그아웃 상태일 시
 					PrintWriter pw = response.getWriter();
-					pw.write("<script>" + "alert('로그아웃 상태입니다.');"
+					pw.write("<script>" + "alert('로그아웃 상태입니다.');"	//로그아웃 상태를 알리는 알림창 보내기
 									+ " location.href='"
 									+ request.getContextPath()
-									+ "/member/loginForm.do"
+									+ "/member/loginForm.do"		//로그인 페이지로 이동
 									+ "';"
 									+ "</script>");
 					return;
 				}
 				request.setAttribute("memberVO", memberVO);
-				nextPage="/modconfirm/confirmForm.jsp";			//하기 전에 계정 확인
-			}else if(action.equals("/modmemberForm.do")) {		//회원정보 수정 페이지
-				manageCookieId(cookies, memberVO);
-				String id = memberVO.getId();
-				String pwd = request.getParameter("pwd");
-				memberVO.setPwd(pwd);
+				nextPage="/modconfirm/confirmForm.jsp";			//계정 확인 페이지로 이동
+			}else if(action.equals("/modmemberForm.do")) {		//회원정보 수정 페이지	;;/modconfirm/confirmForm.jsp;;
+				manageCookieId(cookies, memberVO);	//쿠키로 아이디값 확인
+				String id = memberVO.getId();		//id에 값 부여
+				String pwd = request.getParameter("pwd");	//jsp페이지로부터 name=pwd 값 받기(클라이언트가 입력한 비밀번호)
+				memberVO.setPwd(pwd);	//VO pwd 변수에 pwd 값 부여
 				System.out.println("id:"+id + "/ password:" + pwd);
-				boolean loginValue=memberDAO.login(memberVO);
+				boolean loginValue=memberService.login(memberVO);	//
 				if(!loginValue) {
 					PrintWriter pw = response.getWriter();
 					pw.write("<script>"	+ "alert('비밀번호가 맞지 않습니다.');"
@@ -266,7 +264,7 @@ public class MemberController extends HttpServlet {
 										+ "</script>");
 					return;
 				}
-				memberDAO.editInfo(memberVO);
+				memberService.editInfo(memberVO);
 				request.setAttribute("memberVO", memberVO);
 
 				PrintWriter pw = response.getWriter();
@@ -310,7 +308,7 @@ public class MemberController extends HttpServlet {
 				String pnum=request.getParameter("pnum");
 				memberVO.setName(name);
 				memberVO.setPnum(pnum);
-				boolean isId = memberDAO.findId(memberVO);
+				boolean isId = memberService.findId(memberVO);
 				
 				
 				if(!isId) {
@@ -359,7 +357,7 @@ public class MemberController extends HttpServlet {
 				String pnum=request.getParameter("pnum");
 				memberVO.setId(id);
 				memberVO.setPnum(pnum);
-				boolean isPwd = memberDAO.findPwd(memberVO);
+				boolean isPwd = memberService.findPwd(memberVO);
 				
 				if(!isPwd) {
 					PrintWriter pw = response.getWriter();
@@ -376,8 +374,10 @@ public class MemberController extends HttpServlet {
 			}else if(action.equals("/deleteAccount.do")) {		//회원탈퇴
 				clearData(memberVO);
 				manageCookieId(cookies, memberVO);
+				
+				
 				String id = memberVO.getId();
-				memberDAO.withdraw(id);
+				memberService.withdraw(id);
 				memberVO.setId(id);
 				session=request.getSession();
 				session.removeAttribute("loginIdSess");
