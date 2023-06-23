@@ -60,9 +60,6 @@ public class NewsController extends HttpServlet {
 		Cookie[] cookies = request.getCookies();
 		Cookie articlenumCookie;
 
-		// 쿠키(path:/news)값 삭제 -> 메인페이지로 이동시 기사 쿠키 삭제
-		deleteCookie(cookies, response);
-
 		System.out.println("action: " + action); // 어떤 액션인지 콘솔에서 확인용 (나중에 지워짐)
 
 		try {
@@ -73,7 +70,6 @@ public class NewsController extends HttpServlet {
 			List<ArticleVO> ReactRankingList = new ArrayList<ArticleVO>();
 			
 			if (action == null) {
-
 				System.out.println("기본 화면");
 				articlesList = articleService.listArticles(0); // 0: 기사 번호에 따라 정렬 / 1: 추천 수에 따라 정렬
 				request.setAttribute("articlesList", articlesList);
@@ -260,10 +256,14 @@ public class NewsController extends HttpServlet {
 				return;
 
 			} else if (action.equals("/viewArticle.do")) {
+				// 쿠키(path:/news/viewArticle.do)값 삭제
+				deleteCookie(cookies, response);
+				
 				int articlenum = Integer.parseInt(request.getParameter("articlenum"));
 				System.out.println(articlenum + " <= articlenumString입니다");
 
 				articlenumCookie = new Cookie("articlenum", Integer.toString(articlenum));
+				articlenumCookie.setPath("/news/viewArticle.do");
 				articlenumCookie.setMaxAge(60 * 60 * 24);
 				response.addCookie(articlenumCookie);
 
