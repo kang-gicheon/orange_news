@@ -148,7 +148,9 @@ form {
 	
 	console.log(referrer);
 	$( document ).ready( function() {
+		
 		$('#refer').attr("value", referrer);
+		
 	});
 </script>
 

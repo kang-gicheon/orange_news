@@ -272,7 +272,7 @@ public class replyDAO {
 			Connection con = dataFactory.getConnection();
 
 			// 상위 타입 댓글들만 select
-			String query = "delete from reply where renum = ? and parentNum = 0";
+			String query = "delete from reply where renum = ? or parentNum = ?";
 
 			pstmt = con.prepareStatement(query);
 
@@ -280,6 +280,7 @@ public class replyDAO {
 
 			System.out.println(replyNum);
 			pstmt.setInt(1, replyNum);
+			pstmt.setInt(2, replyNum);
 
 			pstmt.executeUpdate();
 

@@ -554,14 +554,14 @@ tr {
 
 
 .type-article-img {
-    max-width: 112px;
-    max-height: 112px;
+    max-width: 100px;
+    max-height: 100px;
     margin: 2px auto;
 }
 
 .type-article-img img {
-	max-height: 112px;
-	max-width: 112px;
+	max-height: 100px;
+	max-width: 100px;
 }
 
 .type-article-title {

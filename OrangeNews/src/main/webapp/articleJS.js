@@ -86,26 +86,26 @@ function resetList(type) {
 			//
 
 			//articleNum을 viewPage에서 받을수 있도록 한다.
-			//일단 임시로 1을 전달
+			// sortType은 정렬 방법을 의미한다.
 			dataType: 'json',
 			data: { "articleNum": aNum , "sortType": type },
 
 			success: function(result) { // 결과 성공 콜백함수
+				//댓글 리스트를 초기화
 				$(".reply-list").empty();
+				
+				//조건문으로 전체 댓글을 출력함
 				for (let i = 0; i < Object.keys(result).length; i++) {
-
+					//댓글의 정보를 받아 댓글을 만들어주는 function
 					makeReply(result[i].userID,
 						result[i].date,
 						result[i].contents,
 						result[i].good,
 						result[i].bad,
 						result[i].replyNum);
-
 				}
 				console.log(result);
-
 			},
-
 			error: function(request, status, error) { // 결과 에러 콜백함수
 				console.log(error)
 			}
@@ -204,9 +204,8 @@ function getGood(renum) {
 		// 경로를 바꿔야 한다면 이 변수를 바꾸기
 		url: '/trc/getgood.do',
 		//
-
-		//articleNum을 viewPage에서 받을수 있도록 한다.
-		//일단 임시로 1을 전달
+		
+		// 답글의 번호를 받아서 추천
 		dataType: 'text',
 		data: { "replyNum": renum },
 
@@ -273,9 +272,8 @@ function deleteType0(renum) {
 		// 경로를 바꿔야 한다면 이 변수를 바꾸기
 		url: '/trc/deletetype0.do',
 		//
-
-		//articleNum을 viewPage에서 받을수 있도록 한다.
-		//일단 임시로 1을 전달
+		
+		// 댓글 번호를 보냄
 		dataType: 'text',
 		data: { "replyNum": renum },
 
@@ -337,8 +335,8 @@ function deleteType1(renum, parentnum) {
 }
 
 function makeReply1(id, date, comment, replyNum, parentNum) {
-	let replyId = "reply" + replyNum;
-	let parentId = "reply" + parentNum;
+	let replyId = "reply" + replyNum; //자기 번호
+	let parentId = "reply" + parentNum; // 상위 댓글의 번호
 	console.log("makeR1 : " + replyId);
 	$('#' + parentId + ' > div > div > .type1-reply-list').append(`
 				<div id="`+ replyId + `">

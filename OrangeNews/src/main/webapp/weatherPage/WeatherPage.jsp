@@ -65,27 +65,31 @@ $(document).ready(function() {
 			
 			// 경로를 바꿔야 한다면 이 변수를 바꾸기
 		    url : '/twc/getco.do',			
-		    //
 		    
 		    dataType : 'json',   
 		    data : {"mapName" : mapName},
 		    
 		    success : function(result) { // 결과 성공 콜백함수
 		        console.log(result);
+		    	
+		    	//해당 결과의 XY 좌표와 시간과 날짜를 받아 API를 구하는 function
 		    	getAPI(result.coX, result.coY, result.nowTime, result.nowDate);
-		    		
+		    	
+		    	//지도 색깔 초기화
 		    	$("g > *").attr('fill', '#109548'); 
-
+				
+		    	// 클릭한 곳의 색깔을 바꿈
 				let getFill1 = document.querySelector("#"+mapId);
 				let getFill2 = getFill1.querySelectorAll("path");
-
 				for(let i = 0; i < getFill2.length; i++){
 					getFill2[i].setAttribute('fill','#FF761A');
 				}
 				
+				// 하위지역 리스트를 비운뒤 다시 채움
 				$("#mapList2").empty();
 				$("#mapList2").show();
 				
+				// 하위구역 목록이라는 설명 추가
 				let empty_text = `<tr><td style="padding-top:20px">하위 구역 목록</td></tr>`
 				$("#mapList2").append(empty_text);
 		    },
@@ -118,10 +122,11 @@ $(document).ready(function() {
 				let temp_html4;
 				let lev2str2;
 				let lev2str;
+				//받은 JSON 파일을 반복문을 통해 리스트로 추가
 		    	for(let i = 0; i < Object.keys(result).length ; i++ ){
-		    		
+		    		// 두줄씩 표시하기 위한 조건문
 		    		if(i%2==0){
-		    			
+		    			// 전체가 갯수가 홀수일시 한개만 추가
 		    			if(i==Object.keys(result).length-1){
 		    				
 		    				lev2str = result[i].lev2;
@@ -130,8 +135,9 @@ $(document).ready(function() {
 				    		temp_html = `<tr><td><span onclick="detailData('`;
 				    		temp_html2 = `')">`+ lev2str + `</span></td></tr>`;
 				    		
-				    		$("#mapList").append(temp_html + mapName + "', '" + lev2str + temp_html2);
-		    				
+				    		$("#mapList").append(temp_html + mapName + "', '" +
+				    				lev2str + temp_html2);
+		    			// 두줄 중 앞줄 추가	
 			    		} else {
 			    			lev2str = result[i].lev2;
 				    		console.log(lev2str);
@@ -139,14 +145,17 @@ $(document).ready(function() {
 				    		temp_html = `<tr><td><span onclick="detailData('`;
 				    		temp_html2 = `')">`+ lev2str + `</td>`;
 			    		}
-
+					// 두줄중 뒷줄 추가
+	
 		    		} else {
 		    			lev2str2 = result[i].lev2;
 			    		console.log(lev2str2);
 			    		
 			    		temp_html3 = `<td><span onclick="detailData('`;
 			    		temp_html4 = `')">`+ lev2str2 + `</span></td></tr>`;
-			    		$("#mapList").append(temp_html + mapName + "', '" + lev2str + temp_html2 + temp_html3 + mapName + "', '" + lev2str2 + temp_html4);
+			    		$("#mapList").append(temp_html + mapName + "', '" + lev2str 
+			    				+ temp_html2 + temp_html3 + mapName 
+			    				+ "', '" + lev2str2 + temp_html4);
 		    		}
 		    		
 		    			
@@ -209,7 +218,7 @@ $(document).ready(function() {
 					$("#mapList2").show();
 
 					for (let i = 0; i < Object.keys(result).length; i++) {
-						
+							
 						if(i%2==0){
 							if(i==Object.keys(result).length-1){
 								
@@ -288,32 +297,33 @@ $(document).ready(function() {
 		var words = new Array();
 		//json object 를 담아줄 객체
 		var obj = "";
-
+		// API를 요청
 		var xhr = new XMLHttpRequest();
 		var url = 'http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getUltraSrtNcst'; /*URL*/
 		var queryParams = '?'
 				+ encodeURIComponent('serviceKey')
 				+ '='
-				+ 'vDvgfXzS%2BoF6c1fJwn8CH205yaaoug7RDKTuX3milX7tMPCWG9%2BHpCOxRMTuCXfWRFkaigYqfU6PjTZe7DtNkA%3D%3D'; /*Service Key*/
-
+				+ 'vDvgfXzS%2BoF6c1fJwn8CH205yaaoug7RDKTuX3milX7tMPCWG'
+				+ '9%2BHpCOxRMTuCXfWRFkaigYqfU6PjTZe7DtNkA%3D%3D'; /*Service Key*/
+		
 		queryParams += '&' + encodeURIComponent('pageNo') + '='
 				+ encodeURIComponent('1'); /*페이지 넘버*/
 		queryParams += '&' + encodeURIComponent('numOfRows') + '='
-				+ encodeURIComponent('1000'); /**/
+				+ encodeURIComponent('1000'); /*1000개당 페이징*/
 		queryParams += '&' + encodeURIComponent('dataType') + '='
-				+ encodeURIComponent('json'); /**/
+				+ encodeURIComponent('json'); /*데이터 타입*/
 
 		// 초 단기 실황일경우 1시간 내의 데이터만 조회 가능
 		queryParams += '&' + encodeURIComponent('base_date') + '='
-				+ encodeURIComponent(date); /**/
+				+ encodeURIComponent(date); /* 날짜 */
 		queryParams += '&' + encodeURIComponent('base_time') + '='
-				+ encodeURIComponent(time); /**/
+				+ encodeURIComponent(time); /* 시간 */
 
 		// 코드 정보는 엑셀에 저장됨
 		queryParams += '&' + encodeURIComponent('nx') + '='
-				+ encodeURIComponent(coX); /**/
+				+ encodeURIComponent(coX); /* x 좌표 */
 		queryParams += '&' + encodeURIComponent('ny') + '='
-				+ encodeURIComponent(coY); /**/
+				+ encodeURIComponent(coY); /* y 좌표 */
 
 		xhr.open('GET', url + queryParams);
 
@@ -356,36 +366,6 @@ $(document).ready(function() {
 		// API 받기 끝
 	}
 
-	/* function search () {
-	
-	 let lev1 = $("#wArea").text();
-	 let lev2 = document.getElementById('searchInput').value;
-	
-	 console.log(lev1);
-	 console.log(lev2);
-	
-	 $.ajax({
-	
-	 type : 'post',	
-	
-	 // 경로를 바꿔야 한다면 이 변수를 바꾸기
-	 url : '/twc/searchweather.do',			
-	 //
-	
-	 dataType : 'json',   
-	 data : { "lev1" : lev1 , "lev2" : lev2},
-	
-	 success : function(result) { // 결과 성공 콜백함수
-	
-	 console.log(result);
-	
-	 },
-	
-	 error : function(request, status, error) { // 결과 에러 콜백함수
-	 console.log(error)
-	 }
-	 })
-	 } */
 </script>
 
 

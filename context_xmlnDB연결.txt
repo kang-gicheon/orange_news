@@ -1,1 +1,0 @@
-<Resource auth="Container" driverClassName="oracle.jdbc.OracleDriver" maxActive="50" maxWait="-1" name="jdbc/oracle" password="12345" type="javax.sql.DataSource" url="jdbc:oracle:thin:@localhost:1521:XE" username="hr"/>

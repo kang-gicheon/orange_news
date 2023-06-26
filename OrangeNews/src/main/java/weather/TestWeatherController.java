@@ -65,7 +65,7 @@ public class TestWeatherController extends HttpServlet {
 				
 			} else if (action.equals("/getco.do")) {
 				
-				// 지도의 지역을 클릭했을때 발동함
+				// 지도의 지역을 클릭했을때 실행 
 				
 				// 대량의좌표 코드를 받기위한 JSON 변수 선언과 그 타입을 UTF-8로 설정
 				JSONObject totalObject;
@@ -102,16 +102,22 @@ public class TestWeatherController extends HttpServlet {
 				
 			} else if (action.equals("/getco2.do")) {
 				
+				// 지도의 지역을 클릭했을때 실행 
+				
+				// 대량의좌표 코드를 받기위한 JSON 변수 선언과 그 타입을 UTF-8로 설정
 				JSONObject totalObject;
 				response.setContentType("application/x-json; charset=UTF-8");
 		    
+				//응답 writer out
 				PrintWriter out = response.getWriter();
 				mapName = request.getParameter("lev1");
 				String lev2 = request.getParameter("lev2");
 				
 				System.out.println(mapName + " " + lev2);
+				
 				// API 구하는 부분
 				
+				// 지도의 이름을 구하여 해당 지역의 좌표와 검색한 시간을 설정함
 				WeatherVO coXY = wDao.findCoordinate(mapName, lev2);
 				
 				Map<String, String> map = new HashMap<>();

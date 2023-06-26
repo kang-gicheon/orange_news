@@ -48,30 +48,35 @@ public class replyController extends HttpServlet {
 		try {
 			
 			if (action.equals("/type0list.do")) {
-				
+				//댓글을 저장할 JSON과 그것을 UTF-8로 설정
 				JSONObject totalObject;
-			
 				response.setContentType("application/x-json; charset=UTF-8");
+				
 		        PrintWriter out = response.getWriter();
-				String articleNum = request.getParameter("articleNum");
-				String type = request.getParameter("sortType");
+		        
+		       
+				String articleNum = request.getParameter("articleNum"); //받은 기사 번호
+				String type = request.getParameter("sortType"); // 받은 정렬 방법
 				System.out.println(articleNum);
 				
-				// API 구하는 부분
-				List<replyVO> replyList  = new ArrayList<replyVO>();
+				List<replyVO> replyList  = new ArrayList<replyVO>(); // 댓글 리스트 선언
 				
+				// 기사번호에 맞는 댓글 리스트를 정렬하여 저장해주는 기능
 				replyList = rDao.showList(articleNum, type);
 				
+				// 댓글리스트를 저장할 해쉬맵
 				Map<Integer, replyVO> map = new HashMap<>();
 				
+				//번호와 댓글 내용을 저장
 				for(int i = 0; i<replyList.size(); i++) {
 					map.put(i, replyList.get(i));
 				}
 				
+				//맵을 JSON에 저장
 				totalObject = new JSONObject(map);
 				
 				System.out.println(totalObject);
-				
+				//JSON 전달
 				out.print(totalObject);
 				
 				return;
@@ -163,16 +168,12 @@ public class replyController extends HttpServlet {
 				int result;
 				response.setContentType("application/x-json; charset=UTF-8");
 		        PrintWriter out = response.getWriter();
-		        
+		        // 기사번호 댓글번호 아이디 내용을 받음
 				String articleNum = request.getParameter("articleNum");
 				String replyNum = request.getParameter("replyNum");
 				String id = request.getParameter("id");
 				String comment = request.getParameter("comment");
-				
-				System.out.println(replyNum);
-				System.out.println(id);
-				System.out.println(comment);
-				
+				// 댓글을 추가함
 				result = rDao.addReply1(articleNum, replyNum, id, comment);
 				
 				if( result == 0) {
